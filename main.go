@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+
+	"github.com/aman/modules"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	stdin := bufio.NewScanner(os.Stdin)
+	stdin.Scan()
+	text := stdin.Text()
+	fmt.Println(text)
+	modules.Hello()
 }
