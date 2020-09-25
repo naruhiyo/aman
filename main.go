@@ -1,17 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/aman/modules"
 )
 
 func main() {
-	stdin := bufio.NewScanner(os.Stdin)
-	stdin.Scan()
-	text := stdin.Text()
-	fmt.Println(text)
-	modules.Hello()
+	// 引数取得
+	var args = modules.Parse()
+
+	// コマンド実行
+	var commandResult = modules.GetOptions(args)
+
+	// オプションだけ取得
+	var optionList = modules.AnalyzeOutput(commandResult)
+	fmt.Println(optionList)
 }
