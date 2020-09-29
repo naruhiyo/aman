@@ -52,37 +52,11 @@ func GetOptions(args []string) string {
 
 /**
 * コマンド実行結果からオプションを抽出する
- */
-func AnalyzeOutput(output string) string {
+**/
+func AnalyzeOutput(output string) []string {
 	// === 条件 ===
 	// ハイフンまたはダブルハイフンで始まる英単語
 	reg := regexp.MustCompile(`-?-[a-zA-Z0-9\-]+`)
 
-	var optionList = reg.FindAllString(output, -1)
-
-	return strings.Join(optionList, "\n")
+	return reg.FindAllString(output, -1)
 }
-
-// func Sample() {
-// 	err := termbox.Init()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	defer termbox.Close()
-
-// 	for {
-// 		switch ev := termbox.PollEvent(); ev.Type {
-// 		case termbox.EventKey:
-// 			switch ev.Key {
-// 			case termbox.KeyEsc:
-// 				return
-// 			default:
-// 				fmt.Println(ev.Key)
-// 				continue
-// 			}
-// 		default:
-// 			return
-// 		}
-// 	}
-// }
