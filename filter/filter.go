@@ -20,7 +20,7 @@ func IncrementalSearch(inputs *string, manLists []string) []string {
 	for indexQuery := 0; indexQuery < len(separatedQuery); indexQuery++ {
 		resultCandidate := []string{}
 		for indexResult := 0; indexResult < len(result); indexResult++ {
-			if 0 < strings.Index(result[indexResult], separatedQuery[indexQuery]) {
+			if 0 <= strings.Index(result[indexResult], separatedQuery[indexQuery]) {
 				resultCandidate = append(resultCandidate, result[indexResult])
 			}
 		}

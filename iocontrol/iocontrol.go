@@ -47,7 +47,9 @@ func RenderQuery(inputs *string) {
 }
 
 func RenderResult(result []string) {
+	fmt.Println("----------")
 	for i := 0; i < len(result); i++ {
 		fmt.Printf("\r%s\n", result[i])
+		fmt.Println("----------")
 	}
 }
