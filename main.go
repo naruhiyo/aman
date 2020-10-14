@@ -23,6 +23,7 @@ func main() {
 	manLists := modules.AnalyzeOutput(commandResult)
 	var inputs = ""
 
+	iocontrol.RenderQuery(&inputs)
 	iocontrol.RenderResult(manLists[:])
 	for {
 		if iocontrol.ReceiveKeys(&inputs) == -1 {
