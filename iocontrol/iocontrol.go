@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/nsf/termbox-go"
 )
@@ -43,12 +44,22 @@ func RenderQuery(inputs *string) {
 	c := exec.Command("clear")
 	c.Stdout = os.Stdout
 	c.Run()
-	fmt.Printf("\r%s\n", *inputs)
+	fmt.Printf("\r> %s\n", *inputs)
 }
 
 func RenderResult(result []string) {
+	_, height := termbox.Size()
+	var row = 0
 	fmt.Println("----------")
+	row++
+	if height <= row {
+		return
+	}
 	for i := 0; i < len(result); i++ {
+		row += strings.Count(result[i], "\n") + 2
+		if height <= row {
+			return
+		}
 		fmt.Printf("\r%s\n", result[i])
 		fmt.Println("----------")
 	}
