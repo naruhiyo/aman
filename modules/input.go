@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -51,25 +52,63 @@ func AnalyzeOutput(output string) []string {
 	// ハイフンまたはダブルハイフンで始まる英単語
 	var splitOutputs []string = strings.Split(output, "\n")
 
-	// オプションを見つけたかどうか
+	// 検索フラグ
+	// true: 検索中、false: 検索してない
 	var isFinding bool = true
 
 	// buffer の方が string結合より効率が良い
 	var buffer bytes.Buffer // オプション説明のブロックを入れる変数
 	var results []string
+	// オプション条件
+	//   - `-` または `--` から始まり、半角英字が続く文字列であること
+	var reg *regexp.Regexp = regexp.MustCompile(`-{1,2}[a-zA-Z]`)
 
+	// オプション条件を満たしているかをチェック
+	var isOptionText = func(line string) bool {
+		return reg.MatchString(line)
+	}
+
+	// オプションの前に何文字空白があるかカウントする
+	var getOptionHeaderBlankCounts = func(line string) int {
+		var count int = 0
+		if strings.Contains(line, "--") {
+			count = strings.Index(line, "--") | 0
+		} else if strings.Contains(line, "-") {
+			count = strings.Index(line, "-") | 0
+		}
+		return count
+	}
+
+	// オプションのヘッダーであるかチェック（オプションの説明文にあるハイフンを弾く）
+	var isOptionHeaderText = func(line string, count int) bool {
+		var blanks string = strings.Repeat(" ", count)
+
+		// 先頭から文字を見たときにオプション条件を満たしているか確認する
+		if strings.HasPrefix(line, blanks+"--") || strings.HasPrefix(line, blanks+"-") {
+			return true
+		}
+
+		return false
+	}
+
+	// オプションを配列に追加する
+	var count int = 0
 	for _, line := range splitOutputs {
-		// オプション判定条件
-		// 1. 半角3文字以上の空白後に`--` または `-` で始まるオプションであること
-		// 2. 前のオプションの説明ではないこと
 		if isFinding {
-			// オプションが来るまでスキップ
-			if !(strings.Contains(line, "   --") || strings.Contains(line, "   -")) {
+			// オプションのヘッダーに来るまでスキップ
+			if !isOptionText(line) {
+				continue
+			}
+
+			// オプションの前に何文字空白があるか計算
+			count = getOptionHeaderBlankCounts(line)
+
+			if !isOptionHeaderText(line, count) {
 				continue
 			}
 
 			isFinding = false
-			buffer.WriteString(line)
+			buffer.WriteString(line[count:])
 		} else {
 			// 改行だった場合次のオプションを探す
 			if len(line) == 0 {
@@ -79,7 +118,7 @@ func AnalyzeOutput(output string) []string {
 				continue
 			}
 			// バッファに文字列追加
-			buffer.WriteString("\n" + line)
+			buffer.WriteString("\n" + line[count:])
 		}
 	}
 
