@@ -23,14 +23,17 @@ func main() {
 	manLists := modules.AnalyzeOutput(commandResult)
 	var inputs = ""
 
+	iocontroller := iocontrol.NewIoController(manLists)
 	iocontrol.RenderQuery(&inputs)
-	iocontrol.RenderResult(manLists[:])
+	pageList := iocontroller.LocatePages(manLists)
+	iocontroller.RenderResult(manLists, pageList[:])
 	for {
-		if iocontrol.ReceiveKeys(&inputs) == -1 {
+		if iocontroller.ReceiveKeys(&inputs) == -1 {
 			return
 		}
 		iocontrol.RenderQuery(&inputs)
-		result := filter.IncrementalSearch(&inputs, manLists[:])
-		iocontrol.RenderResult(result[:])
+		result := filter.IncrementalSearch(&inputs, manLists)
+		pageList = iocontroller.LocatePages(result)
+		iocontroller.RenderResult(result, pageList[:])
 	}
 }
