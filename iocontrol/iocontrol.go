@@ -17,8 +17,8 @@ import (
  * maxPage 最大ページ番号
  */
 type IoController struct {
-	height int
-	page int
+	height  int
+	page    int
 	maxPage int
 }
 
@@ -29,8 +29,8 @@ type IoController struct {
 func NewIoController(manLists []modules.ManData) *IoController {
 	_, height := termbox.Size()
 	iocontroller := IoController{
-		height: height,
-		page: 0,
+		height:  height,
+		page:    0,
 		maxPage: 0,
 	}
 	return &iocontroller
@@ -42,38 +42,43 @@ func DeleteInput(inputs *string) {
 		space += " "
 	}
 	fmt.Printf("\r%s", space)
-	if (0 < len(*inputs)) {
+	if 0 < len(*inputs) {
 		*inputs = (*inputs)[:len(*inputs)-1]
 	}
 }
 
 func (iocontroller *IoController) ReceiveKeys(inputs *string) int {
-	switch ev := termbox.PollEvent(); ev.Type {
-	case termbox.EventKey:
-		switch ev.Key {
-			case termbox.KeyEsc:
-				return -1
-			case termbox.KeySpace:
-				*inputs += " "
-			case termbox.KeyBackspace:
-				DeleteInput(inputs)
-			case termbox.KeyBackspace2:
-				DeleteInput(inputs)
-			case termbox.KeyArrowRight:
-				iocontroller.page++
-				if iocontroller.maxPage < iocontroller.page {
-					iocontroller.page = iocontroller.maxPage
-				}
-			case termbox.KeyArrowLeft:
-				iocontroller.page--
-				if iocontroller.page < 0 {
-					iocontroller.page = 0
-				}
-			default:
-				iocontroller.page = 0
-				*inputs += string(ev.Ch)
+	var ev termbox.Event = termbox.PollEvent()
+
+	if ev.Type != termbox.EventKey {
+		return 0
+	}
+
+	switch ev.Key {
+	case termbox.KeyEsc:
+		return -1
+	case termbox.KeyArrowUp:
+		return 90
+	case termbox.KeyArrowDown:
+		return 91
+	case termbox.KeyArrowRight:
+		iocontroller.page++
+		if iocontroller.maxPage < iocontroller.page {
+			iocontroller.page = iocontroller.maxPage
 		}
+	case termbox.KeyArrowLeft:
+		iocontroller.page--
+		if iocontroller.page < 0 {
+			iocontroller.page = 0
+		}
+	case termbox.KeySpace:
+		*inputs += " "
+	case termbox.KeyBackspace, termbox.KeyBackspace2:
+		DeleteInput(inputs)
 	default:
+		iocontroller.page = 0
+		*inputs += string(ev.Ch)
+		return 0
 	}
 	return 0
 }
@@ -85,7 +90,7 @@ func RenderQuery(inputs *string) {
 	fmt.Printf("\r> %s\n", *inputs)
 }
 
-func (iocontroller *IoController) RenderResult(result []modules.ManData, pageList []int) {
+func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	var row = 0
 	fmt.Printf("%d/%d", iocontroller.page+1, iocontroller.maxPage+1)
 	fmt.Println("----------")
@@ -98,13 +103,18 @@ func (iocontroller *IoController) RenderResult(result []modules.ManData, pageLis
 		return
 	}
 
-	for i := pageList[iocontroller.page]; i < pageList[iocontroller.page + 1]; i++ {
+	for i := pageList[iocontroller.page]; i < pageList[iocontroller.page+1]; i++ {
 		row += strings.Count(result[i].Contents, "\n") + 2
 		if iocontroller.height <= row {
 			return
 		}
-		fmt.Printf("\r%s\n", result[i].Contents)
-		fmt.Println("----------")
+		var state string = "\r%s\n"
+		if selectedPos == i {
+			// 選択行だけ赤色に変更
+			state = "\r\x1b[31m%s\x1b[0m\n"
+		}
+		fmt.Printf(state, result[i].Contents)
+		fmt.Printf(state, "----------")
 	}
 }
 
@@ -128,7 +138,7 @@ func (iocontroller *IoController) LocatePages(manLists []modules.ManData) []int 
 		}
 
 		// ウィンドウの高さをオーバーしてしまう場合、次のページにオプション説明を表示する
-		if iocontroller.height < lineCount + manLists[i].LineNumber {
+		if iocontroller.height < lineCount+manLists[i].LineNumber {
 			lineCount = 2
 			page++
 			pageList = append(pageList, i)
@@ -139,8 +149,8 @@ func (iocontroller *IoController) LocatePages(manLists []modules.ManData) []int 
 
 		lineCount += manLists[i].LineNumber
 
-		if i == len(manLists) - 1 {
-			pageList = append(pageList, i + 1)
+		if i == len(manLists)-1 {
+			pageList = append(pageList, i+1)
 		}
 	}
 
