@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/aman/filter"
 	"github.com/aman/iocontrol"
 	"github.com/aman/modules"
@@ -20,7 +23,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer termbox.Close()
 
 	// 引数取得
 	var args []string = modules.Parse()
@@ -42,6 +44,7 @@ func main() {
 	iocontrol.RenderQuery(&inputs)
 	pageList := iocontroller.LocatePages(result)
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
+loop:
 	for {
 		var keyStatus int = iocontrol.ReceiveKeys(&inputs)
 		iocontrol.RenderQuery(&inputs)
@@ -62,9 +65,16 @@ func main() {
 			var option string = modules.ExtractOption(result[selectedPos])
 			stackOptions = append(stackOptions, option)
 		case ESCAPE:
-			return
+			break loop
 		}
 		pageList = iocontroller.LocatePages(result)
 		iocontroller.RenderResult(selectedPos, result, pageList[:])
 	}
+
+	// deferを利用すると 全ての処理が終わった後に呼ばれる
+	// termbox を先に終了しておかないとコマンドプロンプト上に標準出力されない
+	termbox.Close()
+
+	fmt.Println(strings.Join(args, " "), strings.Join(stackOptions, " "))
+
 }
