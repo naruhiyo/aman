@@ -83,7 +83,5 @@ func AnalyzeOutput(output string) []string {
 		}
 	}
 
-	results = append(results, buffer.String())
-
 	return results
 }
