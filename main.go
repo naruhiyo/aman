@@ -9,9 +9,10 @@ import (
 
 const (
 	ESCAPE     = -1
-	KEY        = 1
+	ANYKEY     = 1
 	ARROW_UP   = 90
 	ARROW_DOWN = 91
+	ENTER      = 99
 )
 
 func main() {
@@ -28,9 +29,14 @@ func main() {
 	var commandResult string = modules.ExecMan(args)
 
 	var manLists []string = modules.AnalyzeOutput(commandResult)
+	// 入力キーワード
 	var inputs string = ""
-	var selectedPos int = -1
+	// 選択位置
+	var selectedPos int = len(manLists) - 1
+	// 検索結果
 	var result []string = manLists
+	// 選択したオプション格納
+	var stackOptions []string
 
 	iocontroller := iocontrol.NewIoController(result)
 	iocontrol.RenderQuery(&inputs)
@@ -41,8 +47,8 @@ func main() {
 		iocontrol.RenderQuery(&inputs)
 
 		switch keyStatus {
-		case KEY:
-			// 毎回 man 結果に対して検索を行う
+		// 毎回 man 結果に対して検索を行う
+		case ANYKEY:
 			result = filter.IncrementalSearch(&inputs, manLists)
 		case ARROW_UP:
 			if selectedPos > 0 {
@@ -52,6 +58,9 @@ func main() {
 			if selectedPos < len(result)-1 {
 				selectedPos++
 			}
+		case ENTER:
+			var option string = modules.ExtractOption(result[selectedPos])
+			stackOptions = append(stackOptions, option)
 		case ESCAPE:
 			return
 		}

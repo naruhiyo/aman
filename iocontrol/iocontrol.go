@@ -73,12 +73,16 @@ func (iocontroller *IoController) ReceiveKeys(inputs *string) int {
 		}
 	case termbox.KeySpace:
 		*inputs += " "
+		break
 	case termbox.KeyBackspace, termbox.KeyBackspace2:
 		DeleteInput(inputs)
+		break
+	case termbox.KeyEnter:
+		return 99
 	default:
 		iocontroller.page = 0
 		*inputs += string(ev.Ch)
-		return 0
+		break
 	}
 	return 0
 }
@@ -91,9 +95,10 @@ func RenderQuery(inputs *string) {
 }
 
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
+	const SEPARATOR = "----------"
 	var row = 0
 	fmt.Printf("%d/%d", iocontroller.page+1, iocontroller.maxPage+1)
-	fmt.Println("----------")
+	fmt.Println(SEPARATOR)
 	row++
 	if iocontroller.height <= row {
 		return
@@ -114,7 +119,7 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 			state = "\r\x1b[31m%s\x1b[0m\n"
 		}
 		fmt.Printf(state, result[i].Contents)
-		fmt.Printf(state, "----------")
+		fmt.Println(SEPARATOR)
 	}
 }
 
