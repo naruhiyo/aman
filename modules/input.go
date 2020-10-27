@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+type ManData struct {
+	Contents string
+	LineNumber int
+}
+
 /**
 * コマンドライン引数を取得
  */
@@ -51,7 +56,7 @@ func ExecMan(args []string) string {
 * @params output manコマンド実行結果
 * @return オプションテキストリスト
 **/
-func AnalyzeOutput(output string) []string {
+func AnalyzeOutput(output string) []ManData {
 	// === 条件 ===
 	// ハイフンまたはダブルハイフンで始まる英単語
 	var splitOutputs []string = strings.Split(output, "\n")
@@ -62,7 +67,7 @@ func AnalyzeOutput(output string) []string {
 
 	// buffer の方が string結合より効率が良い
 	var buffer bytes.Buffer // オプション説明のブロックを入れる変数
-	var results []string
+	var results []ManData
 
 	// オプション条件を満たしているかをチェック
 	var isOptionText = func(line string) bool {
@@ -121,7 +126,10 @@ func AnalyzeOutput(output string) []string {
 		} else {
 			// 改行だった場合次のオプションを探す
 			if len(line) == 0 {
-				results = append(results, buffer.String())
+				results = append(results, ManData {
+					Contents: buffer.String(),
+					LineNumber: strings.Count(buffer.String(), "\n") + 2,
+				})
 				buffer.Reset()
 				isFinding = true
 				continue
