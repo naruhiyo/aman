@@ -30,13 +30,13 @@ func main() {
 	// コマンド実行
 	var commandResult string = modules.ExecMan(args)
 
-	var manLists []string = modules.AnalyzeOutput(commandResult)
+	var manLists []modules.ManData = modules.AnalyzeOutput(commandResult)
 	// 入力キーワード
 	var inputs string = ""
 	// 選択位置
-	var selectedPos int = len(manLists) - 1
+	var selectedPos int = 0
 	// 検索結果
-	var result []string = manLists
+	var result []modules.ManData = manLists
 	// 選択したオプション格納
 	var stackOptions []string
 
@@ -46,7 +46,7 @@ func main() {
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
 loop:
 	for {
-		var keyStatus int = iocontrol.ReceiveKeys(&inputs)
+		var keyStatus int = iocontroller.ReceiveKeys(&inputs, &selectedPos)
 		iocontrol.RenderQuery(&inputs)
 
 		switch keyStatus {
@@ -62,7 +62,7 @@ loop:
 				selectedPos++
 			}
 		case ENTER:
-			var option string = modules.ExtractOption(result[selectedPos])
+			var option string = modules.ExtractOption(result[selectedPos].Contents)
 			stackOptions = append(stackOptions, option)
 		case ESCAPE:
 			break loop

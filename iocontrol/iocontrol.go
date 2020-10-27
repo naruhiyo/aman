@@ -47,7 +47,7 @@ func DeleteInput(inputs *string) {
 	}
 }
 
-func (iocontroller *IoController) ReceiveKeys(inputs *string) int {
+func (iocontroller *IoController) ReceiveKeys(inputs *string, selectedPos *int) int {
 	var ev termbox.Event = termbox.PollEvent()
 
 	if ev.Type != termbox.EventKey {
@@ -81,10 +81,11 @@ func (iocontroller *IoController) ReceiveKeys(inputs *string) int {
 		return 99
 	default:
 		iocontroller.page = 0
+		*selectedPos = 0
 		*inputs += string(ev.Ch)
 		break
 	}
-	return 0
+	return 1
 }
 
 func RenderQuery(inputs *string) {
