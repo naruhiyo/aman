@@ -1,0 +1,28 @@
+run:
+
+issues:
+  exclude-use-default: false
+
+linters:
+  enable:
+    - gocyclo
+    - staticcheck
+    - govet
+    - golint
+  disable:
+    - maligned
+    - exhaustive
+    - noctx
+    - asciicheck
+    - sqlclosecheck
+    - rowserrcheck
+    - gosec
+    - scopelint
+  presets:
+    - bugs
+    - unused
+    - format
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
