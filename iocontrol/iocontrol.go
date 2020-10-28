@@ -126,12 +126,10 @@ func (iocontroller *IoController) RenderOptionStack(command []string, stackOptio
 
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	const SEPARATOR = "----------"
-	var row = 0
+	// rowは、表示行数を表す。
+	// query行と先頭SEPARATORの2行分
+	var row = 2
 	fmt.Println(SEPARATOR)
-	row++
-	if iocontroller.height <= row {
-		return
-	}
 
 	if len(result) == 0 {
 		return
@@ -188,7 +186,8 @@ func (iocontroller *IoController) LocatePages(manLists []modules.ManData) []int 
 		}
 	}
 
-	if iocontroller.height < maxLineNumber {
+	// 2は、query行と先頭SEPARATORの2行分
+	if iocontroller.height < maxLineNumber + 2 {
 		panic(errors.New("Window height is too small"))
 	}
 
