@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/aman/modules"
@@ -13,13 +14,16 @@ import (
 
 /*
  * height  ウィンドウの高さ
+ * width   ウィンドウの幅
  * page    現在のページ番号 定義域は[0, maxPage]
  * maxPage 最大ページ番号
  */
 type IoController struct {
 	height  int
+	width   int
 	page    int
 	maxPage int
+	query   string
 }
 
 /*
@@ -27,27 +31,33 @@ type IoController struct {
  * @description IoControllerのコンストラクタ
  */
 func NewIoController(manLists []modules.ManData) *IoController {
-	_, height := termbox.Size()
+	width, height := termbox.Size()
 	iocontroller := IoController{
 		height:  height,
+		width:   width,
 		page:    0,
 		maxPage: 0,
+		query:   "",
 	}
 	return &iocontroller
 }
 
-func DeleteInput(inputs *string) {
+func (iocontroller *IoController) GetQuery() string {
+	return iocontroller.query
+}
+
+func (iocontroller *IoController) DeleteInput() {
 	var space = ""
-	for i := 0; i < len(*inputs); i++ {
+	for i := 0; i < len(iocontroller.query); i++ {
 		space += " "
 	}
 	fmt.Printf("\r%s", space)
-	if 0 < len(*inputs) {
-		*inputs = (*inputs)[:len(*inputs)-1]
+	if 0 < len(iocontroller.query) {
+		iocontroller.query = (iocontroller.query)[:len(iocontroller.query)-1]
 	}
 }
 
-func (iocontroller *IoController) ReceiveKeys(inputs *string, selectedPos *int) int {
+func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 	var ev termbox.Event = termbox.PollEvent()
 
 	if ev.Type != termbox.EventKey {
@@ -72,33 +82,39 @@ func (iocontroller *IoController) ReceiveKeys(inputs *string, selectedPos *int) 
 			iocontroller.page = 0
 		}
 	case termbox.KeySpace:
-		*inputs += " "
+		iocontroller.query += " "
 		break
 	case termbox.KeyBackspace, termbox.KeyBackspace2:
-		DeleteInput(inputs)
+		iocontroller.DeleteInput()
 		break
 	case termbox.KeyEnter:
 		return 99
 	default:
 		iocontroller.page = 0
 		*selectedPos = 0
-		*inputs += string(ev.Ch)
+		iocontroller.query += string(ev.Ch)
 		break
 	}
 	return 1
 }
 
-func RenderQuery(inputs *string) {
+func (iocontroller *IoController) RenderQuery() {
 	c := exec.Command("clear")
 	c.Stdout = os.Stdout
 	c.Run()
-	fmt.Printf("\r> %s\n", *inputs)
+	fmt.Printf("\r> %s", iocontroller.query)
+}
+
+func (iocontroller *IoController) RenderPageNumber() {
+	var pageNumberText string = strconv.Itoa(iocontroller.page+1) + "/" + strconv.Itoa(iocontroller.maxPage+1)
+	var blankCounts int = iocontroller.width - len("> ") - len(iocontroller.query) - len(pageNumberText)
+	var blanks string = strings.Repeat(" ", blankCounts)
+	fmt.Printf("%s\n", blanks + pageNumberText)
 }
 
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	const SEPARATOR = "----------"
 	var row = 0
-	fmt.Printf("%d/%d", iocontroller.page+1, iocontroller.maxPage+1)
 	fmt.Println(SEPARATOR)
 	row++
 	if iocontroller.height <= row {
