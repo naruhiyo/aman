@@ -31,8 +31,6 @@ func main() {
 	var commandResult string = modules.ExecMan(args)
 
 	var manLists []modules.ManData = modules.AnalyzeOutput(commandResult)
-	// 入力キーワード
-	var inputs string = ""
 	// 選択位置
 	var selectedPos int = 0
 	// 検索結果
@@ -41,18 +39,19 @@ func main() {
 	var stackOptions []string
 
 	iocontroller := iocontrol.NewIoController(result)
-	iocontrol.RenderQuery(&inputs)
+	iocontroller.RenderQuery()
 	pageList := iocontroller.LocatePages(result)
+	iocontroller.RenderPageNumber()
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
 loop:
 	for {
-		var keyStatus int = iocontroller.ReceiveKeys(&inputs, &selectedPos)
-		iocontrol.RenderQuery(&inputs)
+		var keyStatus int = iocontroller.ReceiveKeys(&selectedPos)
+		iocontroller.RenderQuery()
 
 		switch keyStatus {
 		// 毎回 man 結果に対して検索を行う
 		case ANYKEY:
-			result = filter.IncrementalSearch(&inputs, manLists)
+			result = filter.IncrementalSearch(iocontroller.GetQuery(), manLists)
 		case ARROW_UP:
 			if selectedPos > 0 {
 				selectedPos--
@@ -68,6 +67,7 @@ loop:
 			break loop
 		}
 		pageList = iocontroller.LocatePages(result)
+		iocontroller.RenderPageNumber()
 		iocontroller.RenderResult(selectedPos, result, pageList[:])
 	}
 
