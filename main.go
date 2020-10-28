@@ -42,6 +42,7 @@ func main() {
 	iocontroller.RenderQuery()
 	pageList := iocontroller.LocatePages(result)
 	iocontroller.RenderPageNumber()
+	iocontroller.RenderOptionStack(args, stackOptions)
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
 loop:
 	for {
@@ -68,6 +69,7 @@ loop:
 		}
 		pageList = iocontroller.LocatePages(result)
 		iocontroller.RenderPageNumber()
+		iocontroller.RenderOptionStack(args, stackOptions)
 		iocontroller.RenderResult(selectedPos, result, pageList[:])
 	}
 
