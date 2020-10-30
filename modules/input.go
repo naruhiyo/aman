@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"flag"
-	"os/exec"
 	"strings"
+
+	"github.com/mattn/go-pipeline"
 )
 
 type ManData struct {
@@ -37,7 +38,12 @@ func ExecMan(args []string) string {
 	var command string = strings.Join(args, "-")
 
 	// manコマンドを実行する
-	var out, err = exec.Command(MAN, command).Output()
+	// manの結果には\bや\tが入っているためcolで
+	// \bを除外し、\tを半角スペースに変換する
+	out, err := pipeline.Output(
+		[]string{MAN, command},
+		[]string{"col", "-bx"},
+	)
 
 	if err != nil {
 		panic(errors.New("Error: No results"))
