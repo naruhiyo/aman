@@ -11,17 +11,20 @@ import (
 )
 
 /*
- * height  ウィンドウの高さ
- * width   ウィンドウの幅
- * page    現在のページ番号 定義域は[0, maxPage]
- * maxPage 最大ページ番号
+ * height     ウィンドウの高さ
+ * width      ウィンドウの幅
+ * page       現在のページ番号 定義域は[0, maxPage]
+ * maxPage    最大ページ番号
+ * query      検索クエリ
+ * cursorPosX カーソルのx座標
  */
 type IoController struct {
-	height  int
-	width   int
-	page    int
-	maxPage int
-	query   string
+	height     int
+	width      int
+	page       int
+	maxPage    int
+	query      string
+	cursorPosX int
 }
 
 /*
@@ -31,11 +34,12 @@ type IoController struct {
 func NewIoController(manLists []modules.ManData) *IoController {
 	width, height := termbox.Size()
 	iocontroller := IoController{
-		height:  height,
-		width:   width,
-		page:    0,
-		maxPage: 0,
-		query:   "",
+		height:     height,
+		width:      width,
+		page:       0,
+		maxPage:    0,
+		query:      "",
+		cursorPosX: 2,
 	}
 	return &iocontroller
 }
@@ -87,9 +91,14 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 		}
 	case termbox.KeySpace:
 		iocontroller.query += " "
+		iocontroller.cursorPosX++
 		break
 	case termbox.KeyBackspace, termbox.KeyBackspace2:
 		iocontroller.DeleteInput()
+		iocontroller.cursorPosX--
+		if(iocontroller.cursorPosX < 2) {
+			iocontroller.cursorPosX = 2
+		}
 		break
 	case termbox.KeyEnter:
 		return 99
@@ -97,6 +106,9 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 		iocontroller.page = 0
 		*selectedPos = 0
 		iocontroller.query += string(ev.Ch)
+		for _, r := range string(ev.Ch) {
+			iocontroller.cursorPosX += runewidth.RuneWidth(r)
+		}
 		break
 	}
 	return 1
@@ -104,6 +116,10 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 
 func (iocontroller *IoController) RenderQuery() {
 	iocontroller.RenderTextLine(0, 0, "> " + iocontroller.query, termbox.ColorDefault, termbox.ColorDefault)
+}
+
+func (iocontroller *IoController) RenderCursor() {
+	termbox.SetCursor(iocontroller.cursorPosX, 0)
 }
 
 func (iocontroller *IoController) RenderPageNumber() {
