@@ -23,6 +23,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	termbox.SetOutputMode(termbox.Output256)
 
 	// 引数取得
 	var args []string = modules.Parse()
