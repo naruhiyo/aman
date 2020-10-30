@@ -41,6 +41,7 @@ func main() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	iocontroller := iocontrol.NewIoController(result)
 	iocontroller.RenderQuery()
+	iocontroller.RenderCursor()
 	pageList := iocontroller.LocatePages(result)
 	iocontroller.RenderPageNumber()
 	iocontroller.RenderOptionStack(args, stackOptions)
@@ -70,6 +71,7 @@ loop:
 			break loop
 		}
 		iocontroller.RenderQuery()
+		iocontroller.RenderCursor()
 		pageList = iocontroller.LocatePages(result)
 		iocontroller.RenderPageNumber()
 		iocontroller.RenderOptionStack(args, stackOptions)
