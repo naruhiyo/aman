@@ -29,6 +29,17 @@ type IoController struct {
 }
 
 /*
+ * @brief 空白で区切られたどのqueryが探索文字列内のどのindex番号から
+ *        開始する部分文字列なのかを表す
+ * text  空白で区切られたqueryの一要素
+ * index 探索文字列内でtextが部分文字列として一致するindex番号の先頭
+ */
+type MatchedInfo struct {
+	text  string
+	index int
+}
+
+/*
  * @param manLists オプションとオプション説明が格納された文字列と、各オプション説明の行数の配列
  * @description IoControllerのコンストラクタ
  */
@@ -53,6 +64,80 @@ func (iocontroller *IoController) RenderTextLine(x, y int, texts string, fg, bg 
 	for _, r := range texts {
 		termbox.SetCell(x, y, r, fg, bg)
 		x += runewidth.RuneWidth(r)
+	}
+}
+
+/*
+ * @brief originalText内に空白で区切られたqueryが、部分文字列として一致する
+ *        先頭のindex番号及び一致したqueryのMatchedInfo配列を求める
+ * @example originalText: "hoge hogera", query: "og a"の場合、
+ *          matchedInfos: { MatchedInfo{ text: "og", index: 1 },
+ *                          MatchedInfo{ text: "og", index: 6 },
+ *                          MatchedInfo{ text: "a", index: 10 },
+ *                        }
+ * @description
+ *  1. iocontroller.queryを空白区切りに分割し、separetedQueryに格納する
+ *  2. separetedQueryの各要素(query)に対し、targetText内にqueryが部分文字列として存在するかチェックする
+ *  2. 部分文字列なら、先頭のindexをmatchedInfo.index, MatchedInfo.textをqueryとして、appendする
+ *  3. 2.で一致したindexの次の文字以降をtargetTextとして更新し、1.に戻る。
+ *     targetText内に全queryが存在しなくなるまで繰り返す。
+ */
+func (iocontroller *IoController) GetMatchedInfos(originalText string) []MatchedInfo {
+	// 探索文字列
+	var matchedInfos []MatchedInfo
+	var separatedQuery = strings.Fields(iocontroller.query)
+	if 0 < len(iocontroller.query) {
+		for _, query := range separatedQuery {
+			var startIndex = 0
+			var targetText = originalText
+			for {
+				var matchedIndex = strings.Index(targetText, query)
+				if matchedIndex == -1 {
+					break
+				}
+
+				matchedInfos = append(matchedInfos, MatchedInfo {
+					text: query,
+					index: startIndex + utf8.RuneCountInString(targetText[:matchedIndex]),
+				})
+				startIndex += utf8.RuneCountInString(targetText[:matchedIndex]) + 1
+				targetText = string([]rune(originalText)[startIndex:])
+			}
+		}
+	}
+
+	return matchedInfos
+}
+
+func (iocontroller *IoController) RenderColoredTextLine(x, y int, texts string, fg, bg termbox.Attribute) {
+	// texts内でqueryが部分文字列として一致する先頭index番号の配列
+	var matchedInfos []MatchedInfo = iocontroller.GetMatchedInfos(texts)
+	// 注目したいmatchedIndexesのindex番号
+	var textsRune = []rune(texts)
+	var matchedFg termbox.Attribute = 200
+	var getTargetIndex = func(index int) int {
+		for targetIndex, matchedInfo := range matchedInfos {
+			if index == matchedInfo.index {
+				return targetIndex
+			}
+		}
+		return -1
+	}
+
+	for index := 0; index < len(textsRune); index++ {
+		if 0 < len(matchedInfos) {
+			var targetIndex = getTargetIndex(index)
+			if targetIndex != -1 {
+				for _, qr := range matchedInfos[targetIndex].text {
+					termbox.SetCell(x, y, qr, matchedFg, bg)
+					x += runewidth.RuneWidth(qr)
+				}
+				index += len(matchedInfos[targetIndex].text) - 1
+				continue
+			}
+		}
+		termbox.SetCell(x, y, textsRune[index], fg, bg)
+		x += runewidth.RuneWidth(textsRune[index])
 	}
 }
 
@@ -165,13 +250,13 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 			return
 		}
 		if selectedPos == i {
-			// 選択行だけ赤色に変更
-			contentsFg = 167
+			// 選択行だけハイライト
+			contentsFg = 238
 			contentsBg = 160
 		}
 		var contentsLines []string = strings.Split(result[i].Contents, "\n")
 		for line := 0; line < len(contentsLines); line++ {
-			iocontroller.RenderTextLine(0, startLine, contentsLines[line], contentsFg, contentsBg)
+			iocontroller.RenderColoredTextLine(0, startLine, contentsLines[line], contentsFg, contentsBg)
 			startLine++
 		}
 		iocontroller.RenderTextLine(0, startLine, SEPARATOR, separatorFg, separatorBg)
