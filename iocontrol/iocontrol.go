@@ -144,12 +144,13 @@ func (iocontroller *IoController) RenderOptionStack(command []string, stackOptio
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	const SEPARATOR = "----------"
 	var separatorFg, separatorBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault
+	// startLineは、次に表示する行の行番号(0スタート)を表す。
+	// iocontroller.RenderTextLine()が呼ばれた後にインクリメントする
+	// query行、選択オプション行の2行分が既に表示されているので初期値は2
+	var startLine = 2
 
 	iocontroller.RenderTextLine(0, 2, SEPARATOR, separatorFg, separatorBg)
-
-	// rowは、表示行数を表す。
-	// query行と先頭SEPARATORの2行分
-	var row = 2
+	startLine++
 
 	if len(result) == 0 {
 		return
@@ -157,8 +158,10 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 
 	for i := pageList[iocontroller.page]; i < pageList[iocontroller.page+1]; i++ {
 		var contentsFg, contentsBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault
-		row += strings.Count(result[i].Contents, "\n") + 2
-		if iocontroller.height <= row {
+		// Contentsの最終行がターミナルの最終行まで表示可能かどうかを判定している
+		// iocontroller.heightは1スタート、startLineは0スタート
+		// どちらも単位はターミナル上での1行
+		if iocontroller.height < startLine + strings.Count(result[i].Contents, "\n") {
 			return
 		}
 		if selectedPos == i {
@@ -167,11 +170,12 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 			contentsBg = 160
 		}
 		var contentsLines []string = strings.Split(result[i].Contents, "\n")
-		var startLine int = row - strings.Count(result[i].Contents, "\n") - 1
 		for line := 0; line < len(contentsLines); line++ {
-			iocontroller.RenderTextLine(0, startLine + line, contentsLines[line], contentsFg, contentsBg)
+			iocontroller.RenderTextLine(0, startLine, contentsLines[line], contentsFg, contentsBg)
+			startLine++
 		}
-		iocontroller.RenderTextLine(0, startLine + len(contentsLines), SEPARATOR, separatorFg, separatorBg)
+		iocontroller.RenderTextLine(0, startLine, SEPARATOR, separatorFg, separatorBg)
+		startLine++
 	}
 }
 
