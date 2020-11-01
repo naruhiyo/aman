@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/aman/modules"
 	"github.com/mattn/go-runewidth"
@@ -56,12 +57,8 @@ func (iocontroller *IoController) RenderTextLine(x, y int, texts string, fg, bg 
 }
 
 func (iocontroller *IoController) DeleteInput() {
-	var space = ""
-	for i := 0; i < len(iocontroller.query); i++ {
-		space += " "
-	}
 	if 0 < len(iocontroller.query) {
-		iocontroller.query = (iocontroller.query)[:len(iocontroller.query)-1]
+		iocontroller.query = string([]rune(iocontroller.query)[:utf8.RuneCountInString(iocontroller.query)-1])
 	}
 }
 
@@ -94,11 +91,13 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 		iocontroller.cursorPosX++
 		break
 	case termbox.KeyBackspace, termbox.KeyBackspace2:
-		iocontroller.DeleteInput()
-		iocontroller.cursorPosX--
-		if(iocontroller.cursorPosX < 2) {
+		if 0 < len(iocontroller.query) {
+			iocontroller.cursorPosX -= runewidth.RuneWidth([]rune(iocontroller.query)[utf8.RuneCountInString(iocontroller.query)-1])
+		}
+		if iocontroller.cursorPosX < 2 {
 			iocontroller.cursorPosX = 2
 		}
+		iocontroller.DeleteInput()
 		break
 	case termbox.KeyEnter:
 		return 99
