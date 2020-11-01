@@ -38,16 +38,18 @@ func main() {
 	// 選択したオプション格納
 	var stackOptions []string
 
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	iocontroller := iocontrol.NewIoController(result)
 	iocontroller.RenderQuery()
 	pageList := iocontroller.LocatePages(result)
 	iocontroller.RenderPageNumber()
 	iocontroller.RenderOptionStack(args, stackOptions)
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
+	termbox.Flush()
 loop:
 	for {
+		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 		var keyStatus int = iocontroller.ReceiveKeys(&selectedPos)
-		iocontroller.RenderQuery()
 
 		switch keyStatus {
 		// 毎回 man 結果に対して検索を行う
@@ -67,10 +69,12 @@ loop:
 		case ESCAPE:
 			break loop
 		}
+		iocontroller.RenderQuery()
 		pageList = iocontroller.LocatePages(result)
 		iocontroller.RenderPageNumber()
 		iocontroller.RenderOptionStack(args, stackOptions)
 		iocontroller.RenderResult(selectedPos, result, pageList[:])
+		termbox.Flush()
 	}
 
 	// deferを利用すると 全ての処理が終わった後に呼ばれる
@@ -78,5 +82,4 @@ loop:
 	termbox.Close()
 
 	fmt.Println(strings.Join(args, " "), strings.Join(stackOptions, " "))
-
 }

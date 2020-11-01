@@ -2,13 +2,11 @@ package iocontrol
 
 import (
 	"errors"
-	"fmt"
-	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 
 	"github.com/aman/modules"
+	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
 
@@ -46,12 +44,18 @@ func (iocontroller *IoController) GetQuery() string {
 	return iocontroller.query
 }
 
+func (iocontroller *IoController) RenderTextLine(x, y int, texts string, fg, bg termbox.Attribute) {
+	for _, r := range texts {
+		termbox.SetCell(x, y, r, fg, bg)
+		x += runewidth.RuneWidth(r)
+	}
+}
+
 func (iocontroller *IoController) DeleteInput() {
 	var space = ""
 	for i := 0; i < len(iocontroller.query); i++ {
 		space += " "
 	}
-	fmt.Printf("\r%s", space)
 	if 0 < len(iocontroller.query) {
 		iocontroller.query = (iocontroller.query)[:len(iocontroller.query)-1]
 	}
@@ -99,54 +103,59 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 }
 
 func (iocontroller *IoController) RenderQuery() {
-	c := exec.Command("clear")
-	c.Stdout = os.Stdout
-	c.Run()
-	fmt.Printf("\r> %s", iocontroller.query)
+	iocontroller.RenderTextLine(0, 0, "> " + iocontroller.query, termbox.ColorDefault, termbox.ColorDefault)
 }
 
 func (iocontroller *IoController) RenderPageNumber() {
 	var pageNumberText string = strconv.Itoa(iocontroller.page+1) + "/" + strconv.Itoa(iocontroller.maxPage+1)
 	var blankCounts int = iocontroller.width - len("> ") - len(iocontroller.query) - len(pageNumberText)
 	var blanks string = strings.Repeat(" ", blankCounts)
-	fmt.Printf("%s\n", blanks + pageNumberText)
+	iocontroller.RenderTextLine(len("> ") + len(iocontroller.query), 0, blanks + pageNumberText, termbox.ColorDefault, termbox.ColorDefault)
 }
 
 func (iocontroller *IoController) RenderOptionStack(command []string, stackOptions []string) {
+	var optionStack = ""
 	for i := 0; i < len(command); i++ {
-		fmt.Printf("%s ", command[i])
+		optionStack += command[i] + " "
 	}
 	if 0 < len(stackOptions) {
 		for i := 0; i < len(stackOptions); i++ {
-			fmt.Printf("%s ", stackOptions[i])
+			optionStack += stackOptions[i] + " "
 		}
 	}
-	fmt.Println("")
+	iocontroller.RenderTextLine(0, 1, optionStack, termbox.ColorDefault, termbox.ColorDefault)
 }
 
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	const SEPARATOR = "----------"
+	var separatorFg, separatorBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault
+
+	iocontroller.RenderTextLine(0, 2, SEPARATOR, separatorFg, separatorBg)
+
 	// rowは、表示行数を表す。
 	// query行と先頭SEPARATORの2行分
 	var row = 2
-	fmt.Println(SEPARATOR)
 
 	if len(result) == 0 {
 		return
 	}
 
 	for i := pageList[iocontroller.page]; i < pageList[iocontroller.page+1]; i++ {
+		var contentsFg, contentsBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault
 		row += strings.Count(result[i].Contents, "\n") + 2
 		if iocontroller.height <= row {
 			return
 		}
-		var state string = "\r%s\n"
 		if selectedPos == i {
 			// 選択行だけ赤色に変更
-			state = "\r\x1b[31m%s\x1b[0m\n"
+			contentsFg = termbox.ColorRed
 		}
-		fmt.Printf(state, result[i].Contents)
-		fmt.Println(SEPARATOR)
+		var contentsLines []string = strings.Split(result[i].Contents, "\n")
+		var startLine int = row - strings.Count(result[i].Contents, "\n") - 1
+		for line := 0; line < len(contentsLines); line++ {
+			iocontroller.RenderTextLine(0, startLine + line, contentsLines[line], contentsFg, contentsBg)
+		}
+		iocontroller.RenderTextLine(0, startLine + len(contentsLines), SEPARATOR, separatorFg, separatorBg)
 	}
 }
 
