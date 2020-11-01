@@ -112,6 +112,18 @@ func (iocontroller *IoController) RenderPageNumber() {
 	fmt.Printf("%s\n", blanks + pageNumberText)
 }
 
+func (iocontroller *IoController) RenderOptionStack(command []string, stackOptions []string) {
+	for i := 0; i < len(command); i++ {
+		fmt.Printf("%s ", command[i])
+	}
+	if 0 < len(stackOptions) {
+		for i := 0; i < len(stackOptions); i++ {
+			fmt.Printf("%s ", stackOptions[i])
+		}
+	}
+	fmt.Println("")
+}
+
 func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
 	const SEPARATOR = "----------"
 	var row = 0
@@ -147,8 +159,8 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 func (iocontroller *IoController) LocatePages(manLists []modules.ManData) []int {
 	var maxLineNumber = -1
 	pageList := []int{0}
-	// >行と---の2行
-	var lineCount = 2
+	// query行、option stack行、SEPARATORの３行
+	var lineCount = 3
 	var page = 0
 	iocontroller.maxPage = 0
 
