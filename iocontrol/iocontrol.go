@@ -164,6 +164,7 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 		if selectedPos == i {
 			// 選択行だけ赤色に変更
 			contentsFg = 167
+			contentsBg = 160
 		}
 		var contentsLines []string = strings.Split(result[i].Contents, "\n")
 		var startLine int = row - strings.Count(result[i].Contents, "\n") - 1

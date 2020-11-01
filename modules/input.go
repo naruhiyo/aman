@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/mattn/go-pipeline"
+	"github.com/nsf/termbox-go"
 )
 
 type ManData struct {
@@ -101,6 +102,11 @@ func AnalyzeOutput(output string) []ManData {
 	var count int = 0
 	// オプションに必要な空白の個数
 	var definedOptionBlankCount int = -1
+	// 右端詰めのための空白の個数
+	var paddingCounts int
+	// 右端詰めのための空白
+	var padding string
+	width, _ := termbox.Size()
 	for _, line := range splitOutputs {
 		if isFinding {
 			// オプションのヘッダーに来るまでスキップ
@@ -128,7 +134,9 @@ func AnalyzeOutput(output string) []ManData {
 
 			// fmt.Println(line)
 			isFinding = false
-			buffer.WriteString(line[definedOptionBlankCount:])
+			paddingCounts = width - len(line[definedOptionBlankCount:])
+			padding = strings.Repeat(" ", paddingCounts)
+			buffer.WriteString(line[definedOptionBlankCount:] + padding)
 		} else {
 			// 改行だった場合次のオプションを探す
 			if len(line) == 0 {
@@ -141,8 +149,10 @@ func AnalyzeOutput(output string) []ManData {
 				continue
 			}
 
+			paddingCounts = width - len(line[definedOptionBlankCount:])
+			padding = strings.Repeat(" ", paddingCounts)
 			// バッファに文字列追加
-			buffer.WriteString("\n" + line[definedOptionBlankCount:])
+			buffer.WriteString("\n" + line[definedOptionBlankCount:] + padding)
 		}
 	}
 
