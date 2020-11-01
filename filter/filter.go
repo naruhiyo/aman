@@ -15,8 +15,8 @@ import (
 3. 取り出したクエリが、オプション説明文字列の部分文字列なら、次回に取り出すクエリに対する検索対象として、オプション説明文字列を配列に格納する
 4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
 */
-func IncrementalSearch(inputs *string, manLists []modules.ManData) []modules.ManData {
-	separatedQuery := strings.Fields(*inputs)
+func IncrementalSearch(inputs string, manLists []modules.ManData) []modules.ManData {
+	separatedQuery := strings.Fields(inputs)
 	result := manLists
 
 	for indexQuery := 0; indexQuery < len(separatedQuery); indexQuery++ {
