@@ -37,3 +37,19 @@ func IncrementalSearch(inputs string, manLists []ManData) []ManData {
 	}
 	return result
 }
+
+/*
+ * @description 重複選択を制限する
+ * @param option 選択されたオプション
+ * @param stackOptions 選択しているオプション配列
+ * @return 選択しているオプション配列
+ */
+func DistictOption(option string, stackOptions []string) []string {
+	for _, stackOption := range stackOptions {
+		// 一致するオプションが見つかったら追加処理を行わず、returnする
+		if stackOption == option {
+			return stackOptions
+		}
+	}
+	return append(stackOptions, option)
+}
