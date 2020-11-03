@@ -17,8 +17,8 @@ func ExecMan(args []string) string {
 	var command string = strings.Join(args, "-")
 
 	// manコマンドを実行する
-	// manの結果には\bや\tが入っているためcolで
-	// \bを除外し、\tを半角スペースに変換する
+	//   - manの結果には\bや\tが入っているためcolで
+	//   - \bを除外し、\tを半角スペースに変換する
 	out, err := pipeline.Output(
 		[]string{MAN, command},
 		[]string{"col", "-bx"},

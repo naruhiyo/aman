@@ -54,10 +54,20 @@ func NewIoController(manLists []ManData) *IoController {
 	return &iocontroller
 }
 
+/*
+ * @description クエリ文字列の取得
+ */
 func (iocontroller *IoController) GetQuery() string {
 	return iocontroller.query
 }
 
+/*
+ * @description テキストの描画（標準出力）を行う
+ * @param x テキストの出現位置(x座標)
+ * @param y テキストの出現位置(y座標)
+ * @param texts 描画されるテキスト文字列
+ * @param fg, bg 描画時の色（テキストと背景色）
+ */
 func (iocontroller *IoController) RenderTextLine(x, y int, texts string, fg, bg termbox.Attribute) {
 	for _, r := range texts {
 		termbox.SetCell(x, y, r, fg, bg)
@@ -68,6 +78,7 @@ func (iocontroller *IoController) RenderTextLine(x, y int, texts string, fg, bg 
 /*
  * @brief originalText内に空白で区切られたqueryが、部分文字列として一致する
  *        先頭のindex番号及び一致したqueryのMatchedInfo配列を求める
+ * @param originalText オプション説明文
  * @example originalText: "hoge hogera", query: "og a"の場合、
  *          matchedInfos: { MatchedInfo{ text: "og", index: 1 },
  *                          MatchedInfo{ text: "og", index: 6 },
@@ -107,6 +118,13 @@ func (iocontroller *IoController) GetMatchedInfos(originalText string) []Matched
 	return matchedInfos
 }
 
+/*
+ * @description 一致するテキストの色を変更する
+ * @param x テキストの出現位置(x座標)
+ * @param y テキストの出現位置(y座標)
+ * @param texts 描画されるテキスト文字列
+ * @param fg, bg 描画時の色（テキストと背景色）
+ */
 func (iocontroller *IoController) RenderColoredTextLine(x, y int, texts string, fg, bg termbox.Attribute) {
 	// texts内でqueryが部分文字列として一致する先頭index番号の配列
 	var matchedInfos []MatchedInfo = iocontroller.GetMatchedInfos(texts)
@@ -139,12 +157,19 @@ func (iocontroller *IoController) RenderColoredTextLine(x, y int, texts string, 
 	}
 }
 
+/*
+ * @description 入力を削除する
+ */
 func (iocontroller *IoController) DeleteInput() {
 	if 0 < len(iocontroller.query) {
 		iocontroller.query = string([]rune(iocontroller.query)[:utf8.RuneCountInString(iocontroller.query)-1])
 	}
 }
 
+/*
+ * @description キー入力を受け付ける
+ * @param オプションの選択位置
+ */
 func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 	var ev termbox.Event = termbox.PollEvent()
 
@@ -196,14 +221,23 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 	return 1
 }
 
+/*
+ * @description 入力しているクエリを描画する
+ */
 func (iocontroller *IoController) RenderQuery() {
 	iocontroller.RenderTextLine(0, 0, "> "+iocontroller.query, termbox.ColorDefault, termbox.ColorDefault)
 }
 
+/*
+ * @description カーソルを描画する
+ */
 func (iocontroller *IoController) RenderCursor() {
 	termbox.SetCursor(iocontroller.cursorPosX, 0)
 }
 
+/*
+ * @description ページ番号を描画する
+ */
 func (iocontroller *IoController) RenderPageNumber() {
 	var pageNumberText string = strconv.Itoa(iocontroller.page+1) + "/" + strconv.Itoa(iocontroller.maxPage+1)
 	var blankCounts int = iocontroller.width - len("> ") - len(iocontroller.query) - len(pageNumberText)
@@ -211,6 +245,11 @@ func (iocontroller *IoController) RenderPageNumber() {
 	iocontroller.RenderTextLine(len("> ")+len(iocontroller.query), 0, blanks+pageNumberText, termbox.ColorDefault, termbox.ColorDefault)
 }
 
+/*
+ * @description 選択しているオプション一覧を描画する
+ * @param command 入力コマンド
+ * @param stackOptions 選択しているオプション
+ */
 func (iocontroller *IoController) RenderOptionStack(command []string, stackOptions []string) {
 	var optionStack = ""
 	for i := 0; i < len(command); i++ {
@@ -224,6 +263,12 @@ func (iocontroller *IoController) RenderOptionStack(command []string, stackOptio
 	iocontroller.RenderTextLine(0, 1, optionStack, termbox.ColorDefault, termbox.ColorDefault)
 }
 
+/*
+ * @description 検索結果を表示する
+ * @param オプションの選択位置
+ * @param result 抽出結果
+ * @param pageList ページ数
+ */
 func (iocontroller *IoController) RenderResult(selectedPos int, result []ManData, pageList []int) {
 	const SEPARATOR = "----------"
 	var separatorFg, separatorBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault

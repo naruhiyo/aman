@@ -18,6 +18,7 @@ const (
 )
 
 func main() {
+	// 標準入力有効化
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
@@ -38,6 +39,7 @@ func main() {
 	// 選択したオプション格納
 	var stackOptions []string
 
+	// 初期化
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	iocontroller := iocontrol.NewIoController(result)
 	iocontroller.RenderQuery()
@@ -47,6 +49,10 @@ func main() {
 	iocontroller.RenderOptionStack(args, stackOptions)
 	iocontroller.RenderResult(selectedPos, result, pageList[:])
 	termbox.Flush()
+
+	// ユーザーからの入力を受け付ける
+	//   - キーボード入力一回ごとにループ実行させることでインタラクティブな処理を実現
+	//   - `ESC`キーで処理を終了
 loop:
 	for {
 		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
@@ -70,6 +76,7 @@ loop:
 		case ESCAPE:
 			break loop
 		}
+		// 描画処理 & ページネーション
 		iocontroller.RenderQuery()
 		iocontroller.RenderCursor()
 		pageList = iocontroller.LocatePages(result)
