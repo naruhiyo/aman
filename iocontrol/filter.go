@@ -14,13 +14,16 @@ import (
 4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
 */
 func IncrementalSearch(inputs string, manLists []ManData) []ManData {
+	// クエリ取得
 	separatedQuery := strings.Fields(inputs)
 	result := manLists
 
 	for indexQuery := 0; indexQuery < len(separatedQuery); indexQuery++ {
 		resultCandidate := []ManData{}
 		for indexResult := 0; indexResult < len(result); indexResult++ {
+			// クエリの取り出し
 			if 0 <= strings.Index(result[indexResult].Contents, separatedQuery[indexQuery]) {
+				// クエリと一致する場合は結果に追加
 				resultCandidate = append(resultCandidate, ManData{
 					Contents:   result[indexResult].Contents,
 					LineNumber: result[indexResult].LineNumber,

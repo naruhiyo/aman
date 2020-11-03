@@ -10,7 +10,8 @@ import (
 )
 
 /*
- * 選択した行のオプションを抽出する
+ * @description 選択した行のオプションを抽出する
+ * @param line オプション説明文
  */
 func ExtractOption(line string) string {
 	// 文字列を空白区切で区切ったものの先頭がオプションのはずなのでそれを取得
@@ -25,7 +26,7 @@ type ManData struct {
 }
 
 /**
-* コマンドライン引数を取得
+* @description コマンドライン引数を取得
  */
 func Parse() []string {
 	flag.Parse()
@@ -39,7 +40,7 @@ func Parse() []string {
 }
 
 /**
-* コマンド実行結果からオプションを抽出する
+* @description コマンド実行結果からオプションを抽出する
 * オプションの判定方法
 *   - `-` (または `--`) を検索する
 *   - 検索結果に対して`-`(または `--`) の出現位置(index)を計算する
