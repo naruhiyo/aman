@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aman/filter"
 	"github.com/aman/iocontrol"
-	"github.com/aman/modules"
+	"github.com/aman/util"
 	"github.com/nsf/termbox-go"
 )
 
@@ -26,16 +25,16 @@ func main() {
 	termbox.SetOutputMode(termbox.Output256)
 
 	// 引数取得
-	var args []string = modules.Parse()
+	var args []string = iocontrol.Parse()
 
 	// コマンド実行
-	var commandResult string = modules.ExecMan(args)
+	var commandResult string = util.ExecMan(args)
 
-	var manLists []modules.ManData = modules.AnalyzeOutput(commandResult)
+	var manLists []iocontrol.ManData = iocontrol.AnalyzeMan(commandResult)
 	// 選択位置
 	var selectedPos int = 0
 	// 検索結果
-	var result []modules.ManData = manLists
+	var result []iocontrol.ManData = manLists
 	// 選択したオプション格納
 	var stackOptions []string
 
@@ -56,7 +55,7 @@ loop:
 		switch keyStatus {
 		// 毎回 man 結果に対して検索を行う
 		case ANYKEY:
-			result = filter.IncrementalSearch(iocontroller.GetQuery(), manLists)
+			result = iocontrol.IncrementalSearch(iocontroller.GetQuery(), manLists)
 		case ARROW_UP:
 			if selectedPos > 0 {
 				selectedPos--
@@ -66,7 +65,7 @@ loop:
 				selectedPos++
 			}
 		case ENTER:
-			var option string = modules.ExtractOption(result[selectedPos].Contents)
+			var option string = iocontrol.ExtractOption(result[selectedPos].Contents)
 			stackOptions = append(stackOptions, option)
 		case ESCAPE:
 			break loop

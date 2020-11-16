@@ -1,12 +1,10 @@
 package iocontrol
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 	"unicode/utf8"
 
-	"github.com/aman/modules"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
@@ -43,7 +41,7 @@ type MatchedInfo struct {
  * @param manLists オプションとオプション説明が格納された文字列と、各オプション説明の行数の配列
  * @description IoControllerのコンストラクタ
  */
-func NewIoController(manLists []modules.ManData) *IoController {
+func NewIoController(manLists []ManData) *IoController {
 	width, height := termbox.Size()
 	iocontroller := IoController{
 		height:     height,
@@ -96,8 +94,8 @@ func (iocontroller *IoController) GetMatchedInfos(originalText string) []Matched
 					break
 				}
 
-				matchedInfos = append(matchedInfos, MatchedInfo {
-					text: query,
+				matchedInfos = append(matchedInfos, MatchedInfo{
+					text:  query,
 					index: startIndex + utf8.RuneCountInString(targetText[:matchedIndex]),
 				})
 				startIndex += utf8.RuneCountInString(targetText[:matchedIndex]) + 1
@@ -199,7 +197,7 @@ func (iocontroller *IoController) ReceiveKeys(selectedPos *int) int {
 }
 
 func (iocontroller *IoController) RenderQuery() {
-	iocontroller.RenderTextLine(0, 0, "> " + iocontroller.query, termbox.ColorDefault, termbox.ColorDefault)
+	iocontroller.RenderTextLine(0, 0, "> "+iocontroller.query, termbox.ColorDefault, termbox.ColorDefault)
 }
 
 func (iocontroller *IoController) RenderCursor() {
@@ -210,7 +208,7 @@ func (iocontroller *IoController) RenderPageNumber() {
 	var pageNumberText string = strconv.Itoa(iocontroller.page+1) + "/" + strconv.Itoa(iocontroller.maxPage+1)
 	var blankCounts int = iocontroller.width - len("> ") - len(iocontroller.query) - len(pageNumberText)
 	var blanks string = strings.Repeat(" ", blankCounts)
-	iocontroller.RenderTextLine(len("> ") + len(iocontroller.query), 0, blanks + pageNumberText, termbox.ColorDefault, termbox.ColorDefault)
+	iocontroller.RenderTextLine(len("> ")+len(iocontroller.query), 0, blanks+pageNumberText, termbox.ColorDefault, termbox.ColorDefault)
 }
 
 func (iocontroller *IoController) RenderOptionStack(command []string, stackOptions []string) {
@@ -226,7 +224,7 @@ func (iocontroller *IoController) RenderOptionStack(command []string, stackOptio
 	iocontroller.RenderTextLine(0, 1, optionStack, termbox.ColorDefault, termbox.ColorDefault)
 }
 
-func (iocontroller *IoController) RenderResult(selectedPos int, result []modules.ManData, pageList []int) {
+func (iocontroller *IoController) RenderResult(selectedPos int, result []ManData, pageList []int) {
 	const SEPARATOR = "----------"
 	var separatorFg, separatorBg termbox.Attribute = termbox.ColorDefault, termbox.ColorDefault
 	// startLineは、次に表示する行の行番号(0スタート)を表す。
@@ -246,7 +244,7 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 		// Contentsの最終行がターミナルの最終行まで表示可能かどうかを判定している
 		// iocontroller.heightは1スタート、startLineは0スタート
 		// どちらも単位はターミナル上での1行
-		if iocontroller.height < startLine + strings.Count(result[i].Contents, "\n") {
+		if iocontroller.height < startLine+strings.Count(result[i].Contents, "\n") {
 			return
 		}
 		if selectedPos == i {
@@ -262,48 +260,4 @@ func (iocontroller *IoController) RenderResult(selectedPos int, result []modules
 		iocontroller.RenderTextLine(0, startLine, SEPARATOR, separatorFg, separatorBg)
 		startLine++
 	}
-}
-
-/*
- * @param manLists オプションとオプション説明が格納された文字列と、各オプション説明の行数の配列
- * @description 各ページの先頭となるオプション配列manListsのindex番号が格納された配列を生成する
- */
-func (iocontroller *IoController) LocatePages(manLists []modules.ManData) []int {
-	var maxLineNumber = -1
-	pageList := []int{0}
-	// query行、option stack行、SEPARATORの３行
-	var lineCount = 3
-	var page = 0
-	iocontroller.maxPage = 0
-
-	for i := 0; i < len(manLists); i++ {
-		// for文を抜けた後に、ウィンドウの高さが低すぎて描画できないかを判定するために、
-		// 一番行数の多いオプション説明文の行数を求める
-		if maxLineNumber < manLists[i].LineNumber {
-			maxLineNumber = manLists[i].LineNumber
-		}
-
-		// ウィンドウの高さをオーバーしてしまう場合、次のページにオプション説明を表示する
-		if iocontroller.height < lineCount+manLists[i].LineNumber {
-			lineCount = 2
-			page++
-			pageList = append(pageList, i)
-			if iocontroller.maxPage < page {
-				iocontroller.maxPage = page
-			}
-		}
-
-		lineCount += manLists[i].LineNumber
-
-		if i == len(manLists)-1 {
-			pageList = append(pageList, i+1)
-		}
-	}
-
-	// 2は、query行と先頭SEPARATORの2行分
-	if iocontroller.height < maxLineNumber + 2 {
-		panic(errors.New("Window height is too small"))
-	}
-
-	return pageList
 }

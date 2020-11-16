@@ -1,4 +1,4 @@
-package modules
+package iocontrol
 
 import (
 	"bytes"
@@ -6,12 +6,21 @@ import (
 	"flag"
 	"strings"
 
-	"github.com/mattn/go-pipeline"
 	"github.com/nsf/termbox-go"
 )
 
+/*
+ * 選択した行のオプションを抽出する
+ */
+func ExtractOption(line string) string {
+	// 文字列を空白区切で区切ったものの先頭がオプションのはずなのでそれを取得
+	var option string = strings.Split(line, " ")[0]
+	// 末端の改行を削除する
+	return strings.TrimRight(option, "\n")
+}
+
 type ManData struct {
-	Contents string
+	Contents   string
 	LineNumber int
 }
 
@@ -30,30 +39,6 @@ func Parse() []string {
 }
 
 /**
-* man コマンドを実行する
-* @params args 実行時引数
-**/
-func ExecMan(args []string) string {
-	// man コマンドは空白区切のコマンドをハイフンで管理しているため、ハイフンつなぎに変更
-	const MAN string = "man"
-	var command string = strings.Join(args, "-")
-
-	// manコマンドを実行する
-	// manの結果には\bや\tが入っているためcolで
-	// \bを除外し、\tを半角スペースに変換する
-	out, err := pipeline.Output(
-		[]string{MAN, command},
-		[]string{"col", "-bx"},
-	)
-
-	if err != nil {
-		panic(errors.New("Error: No results"))
-	}
-
-	return string(out)
-}
-
-/**
 * コマンド実行結果からオプションを抽出する
 * オプションの判定方法
 *   - `-` (または `--`) を検索する
@@ -63,7 +48,7 @@ func ExecMan(args []string) string {
 * @params output manコマンド実行結果
 * @return オプションテキストリスト
 **/
-func AnalyzeOutput(output string) []ManData {
+func AnalyzeMan(output string) []ManData {
 	// === 条件 ===
 	// ハイフンまたはダブルハイフンで始まる英単語
 	var splitOutputs []string = strings.Split(output, "\n")
@@ -140,8 +125,8 @@ func AnalyzeOutput(output string) []ManData {
 		} else {
 			// 改行だった場合次のオプションを探す
 			if len(line) == 0 {
-				results = append(results, ManData {
-					Contents: buffer.String(),
+				results = append(results, ManData{
+					Contents:   buffer.String(),
 					LineNumber: strings.Count(buffer.String(), "\n") + 2,
 				})
 				buffer.Reset()
