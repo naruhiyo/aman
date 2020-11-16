@@ -119,7 +119,7 @@ func (iocontroller *IoController) GetMatchedInfos(originalText string) []Matched
 }
 
 /*
- * @description 一致するテキストの色を変更する
+ * @description 一致するテキストの色を変更しつつ、テキストの描画（標準出力）を行う
  * @param x テキストの出現位置(x座標)
  * @param y テキストの出現位置(y座標)
  * @param texts 描画されるテキスト文字列
@@ -265,9 +265,9 @@ func (iocontroller *IoController) RenderOptionStack(command []string, stackOptio
 
 /*
  * @description 検索結果を表示する
- * @param オプションの選択位置
+ * @param selectedPos プションの選択位置
  * @param result 抽出結果
- * @param pageList ページ数
+ * @param pageList 各ページの先頭となるmanListのindex番号
  */
 func (iocontroller *IoController) RenderResult(selectedPos int, result []ManData, pageList []int) {
 	const SEPARATOR = "----------"

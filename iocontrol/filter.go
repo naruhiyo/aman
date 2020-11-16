@@ -14,7 +14,7 @@ import (
 4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
 */
 func IncrementalSearch(inputs string, manLists []ManData) []ManData {
-	// クエリ取得
+	// クエリを空白区切りで取得
 	separatedQuery := strings.Fields(inputs)
 	result := manLists
 
