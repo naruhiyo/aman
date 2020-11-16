@@ -72,7 +72,7 @@ loop:
 			}
 		case ENTER:
 			var option string = iocontrol.ExtractOption(result[selectedPos].Contents)
-			stackOptions = iocontrol.DistictOption(option, stackOptions)
+			stackOptions = iocontrol.DistinctOption(option, stackOptions)
 		case ESCAPE:
 			break loop
 		}

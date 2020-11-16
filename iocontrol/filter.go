@@ -44,7 +44,7 @@ func IncrementalSearch(inputs string, manLists []ManData) []ManData {
  * @param stackOptions 選択しているオプション配列
  * @return 選択しているオプション配列
  */
-func DistictOption(option string, stackOptions []string) []string {
+func DistinctOption(option string, stackOptions []string) []string {
 	for _, stackOption := range stackOptions {
 		// 一致するオプションが見つかったら追加処理を行わず、returnする
 		if stackOption == option {
