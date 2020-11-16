@@ -2,7 +2,10 @@ package util
 
 import (
 	"errors"
+	"os"
+	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
@@ -40,5 +43,10 @@ func ExecMan(args []string) string {
 func CmdOutput(args []string, stackOptions []string) {
 	// コマンドをターミナル上に出力
 	var command string = strings.Join(args, " ") + " " + strings.Join(stackOptions, " ")
+	// ターミナルをクリアする
+	c := exec.Command("clear")
+	time.Sleep(time.Millisecond * 10) // 処理待ち用 sleep
+	c.Stdout = os.Stdout
+	c.Run()
 	robotgo.TypeStr(command)
 }
