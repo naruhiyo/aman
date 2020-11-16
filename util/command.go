@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
-	"github.com/robotgo"
 )
 
 /**
@@ -41,5 +41,4 @@ func CmdOutput(args []string, stackOptions []string) {
 	// コマンドをターミナル上に出力
 	var command string = strings.Join(args, " ") + " " + strings.Join(stackOptions, " ")
 	robotgo.TypeStr(command)
-
 }
