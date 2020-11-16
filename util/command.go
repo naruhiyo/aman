@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/mattn/go-pipeline"
+	"github.com/robotgo"
 )
 
 /**
-* man コマンドを実行する
+* @description man コマンドを実行する
 * @params args 実行時引数
 **/
 func ExecMan(args []string) string {
@@ -29,4 +30,16 @@ func ExecMan(args []string) string {
 	}
 
 	return string(out)
+}
+
+/**
+* @description オプション付きコマンドをターミナルに出力する
+* @params args 実行時引数
+* @params stackOptions 選択したオプション
+**/
+func CmdOutput(args []string, stackOptions []string) {
+	// コマンドをターミナル上に出力
+	var command string = strings.Join(args, " ") + " " + strings.Join(stackOptions, " ")
+	robotgo.TypeStr(command)
+
 }
