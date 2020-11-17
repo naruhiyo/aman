@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/aman/iocontrol"
 	"github.com/aman/util"
 	"github.com/nsf/termbox-go"
@@ -90,5 +87,6 @@ loop:
 	// termbox を先に終了しておかないとコマンドプロンプト上に標準出力されない
 	termbox.Close()
 
-	fmt.Println(strings.Join(args, " "), strings.Join(stackOptions, " "))
+	// コマンド実行
+	util.CmdOutput(args, stackOptions)
 }

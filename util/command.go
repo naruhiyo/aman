@@ -2,13 +2,17 @@ package util
 
 import (
 	"errors"
+	"os"
+	"os/exec"
 	"strings"
+	"time"
 
+	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
 )
 
 /**
-* man コマンドを実行する
+* @description man コマンドを実行する
 * @params args 実行時引数
 **/
 func ExecMan(args []string) string {
@@ -29,4 +33,30 @@ func ExecMan(args []string) string {
 	}
 
 	return string(out)
+}
+
+/**
+* @description オプション付きコマンドをターミナルに出力する
+* @params args 実行時引数
+* @params stackOptions 選択したオプション
+**/
+func CmdOutput(args []string, stackOptions []string) {
+	execWithStdin("stty", "-echo") // エコーバックを OFF
+	// コマンドをターミナル上に出力
+	var command string = strings.Join(args, " ") + " " + strings.Join(stackOptions, " ")
+	// ターミナルをクリアする
+	robotgo.TypeStr(command)
+	time.Sleep(time.Millisecond * 15) // システムが記憶している入力をクリア
+	execWithStdin("stty", "echo")     // エコーバックを ON
+}
+
+/**
+* @description コマンドを標準入力から実行する
+* @params name コマンド
+* @params option コマンドオプション
+**/
+func execWithStdin(name string, option ...string) {
+	c := exec.Command(name, option...)
+	c.Stdin = os.Stdin
+	c.Run()
 }
