@@ -1,18 +1,31 @@
 package main
 
+/**
+ * m*** : 実装モジュール
+ * s*** : 構造体モジュール
+ */
 import (
-	"github.com/aman/iocontrol"
-	"github.com/aman/util"
+	mio "github.com/aman/modules/io"
+	mmodel "github.com/aman/modules/model"
+	mpagination "github.com/aman/modules/pagination"
+	mutil "github.com/aman/modules/util"
+	mwindow "github.com/aman/modules/window"
 	"github.com/nsf/termbox-go"
 )
 
-const (
-	ESCAPE     = -1
-	ANYKEY     = 1
-	ARROW_UP   = 90
-	ARROW_DOWN = 91
-	ENTER      = 99
-)
+/**
+ * 描画処理
+ */
+func render(input *mio.InputStruct, list *mmodel.ListStruct, pagination *mpagination.PaginationStruct, window *mwindow.WindowInfoStruct) {
+	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	pagination.LocatePages(list.MapLineNumber(), window.Height)
+	window.RenderQuery(input.Query)
+	window.RenderCursor(input.CursorPosX)
+	window.RenderOptionStack(input.Commands, input.Options)
+	window.RenderPageNumber(pagination.Page, pagination.MaxPage, input.Query)
+	window.RenderResult(pagination, list, input.Query)
+	termbox.Flush()
+}
 
 func main() {
 	// 標準入力有効化
@@ -22,65 +35,60 @@ func main() {
 	}
 	termbox.SetOutputMode(termbox.Output256)
 
-	// 引数取得
-	var args []string = iocontrol.Parse()
+	// 初期化
+	var windowInfo *mwindow.WindowInfoStruct = mwindow.NewWindowInfo()
+	var pagination *mpagination.PaginationStruct = mpagination.NewPagination()
+	var input *mio.InputStruct = mio.NewInput()
+	var list *mmodel.ListStruct = mmodel.NewList()
+	var command *mutil.CommandStruct = mutil.NewCommand()
 
 	// コマンド実行
-	var commandResult string = util.ExecMan(args)
+	command.ExecMan(input.Commands)
+	list.AnalyzeMan(command.ManResult)
 
-	var manLists []iocontrol.ManData = iocontrol.AnalyzeMan(commandResult)
-	// 選択位置
-	var selectedPos int = 0
-	// 検索結果
-	var result []iocontrol.ManData = manLists
-	// 選択したオプション格納
-	var stackOptions []string
-
-	// 初期化
-	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-	iocontroller := iocontrol.NewIoController(result)
-	iocontroller.RenderQuery()
-	iocontroller.RenderCursor()
-	pageList := iocontroller.LocatePages(result)
-	iocontroller.RenderPageNumber()
-	iocontroller.RenderOptionStack(args, stackOptions)
-	iocontroller.RenderResult(selectedPos, result, pageList[:])
-	termbox.Flush()
+	// 描画処理 & ページネーション
+	render(input, list, pagination, windowInfo)
 
 	// ユーザーからの入力を受け付ける
 	//   - キーボード入力一回ごとにループ実行させることでインタラクティブな処理を実現
 	//   - `ESC`キーで処理を終了
 loop:
 	for {
-		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
-		var keyStatus int = iocontroller.ReceiveKeys(&selectedPos)
+		var ev termbox.Event = termbox.PollEvent()
 
-		switch keyStatus {
-		// 毎回 man 結果に対して検索を行う
-		case ANYKEY:
-			result = iocontrol.IncrementalSearch(iocontroller.GetQuery(), manLists)
-		case ARROW_UP:
-			if selectedPos > 0 {
-				selectedPos--
-			}
-		case ARROW_DOWN:
-			if selectedPos < len(result)-1 {
-				selectedPos++
-			}
-		case ENTER:
-			var option string = iocontrol.ExtractOption(result[selectedPos].Contents)
-			stackOptions = iocontrol.DistinctOption(option, stackOptions)
-		case ESCAPE:
+		if ev.Type != termbox.EventKey {
 			break loop
 		}
+
+		// 毎回 man 結果に対して検索を行う
+		switch ev.Key {
+		case termbox.KeyEsc:
+			break loop
+		case termbox.KeyArrowUp:
+			pagination.NextLine()
+		case termbox.KeyArrowDown:
+			var maxLength int = len(list.Filtered) - 1
+			pagination.BackLine(maxLength)
+		case termbox.KeyArrowRight:
+			pagination.NextPage()
+		case termbox.KeyArrowLeft:
+			pagination.BackPage()
+		case termbox.KeyEnter:
+			var pos int = pagination.SelectedPos
+			var contents string = list.Filtered[pos].Contents
+			input.ExtractOption(contents)
+		case termbox.KeySpace:
+			input.PutSpace()
+		case termbox.KeyBackspace, termbox.KeyBackspace2:
+			input.DeleteInput()
+			list.IncrementalSearch(input.Query)
+		default:
+			pagination.Reset()
+			input.PutKey(ev)
+			list.IncrementalSearch(input.Query)
+		}
 		// 描画処理 & ページネーション
-		iocontroller.RenderQuery()
-		iocontroller.RenderCursor()
-		pageList = iocontroller.LocatePages(result)
-		iocontroller.RenderPageNumber()
-		iocontroller.RenderOptionStack(args, stackOptions)
-		iocontroller.RenderResult(selectedPos, result, pageList[:])
-		termbox.Flush()
+		render(input, list, pagination, windowInfo)
 	}
 
 	// deferを利用すると 全ての処理が終わった後に呼ばれる
@@ -88,5 +96,5 @@ loop:
 	termbox.Close()
 
 	// コマンド実行
-	util.CmdOutput(args, stackOptions)
+	command.CmdOutput(input.Commands, input.Options)
 }

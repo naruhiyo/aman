@@ -1,4 +1,4 @@
-package util
+package mutil
 
 import (
 	"errors"
@@ -7,18 +7,30 @@ import (
 	"strings"
 	"time"
 
+	sutil "github.com/aman/struct/util"
 	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
 )
+
+type CommandStruct sutil.CommandStruct
+
+/*
+ * コンストラクタ作成
+ */
+func NewCommand() *CommandStruct {
+	return &CommandStruct{
+		ManResult: "",
+	}
+}
 
 /**
 * @description man コマンドを実行する
 * @params args 実行時引数
 **/
-func ExecMan(args []string) string {
+func (myself *CommandStruct) ExecMan(commands []string) {
 	// man コマンドは空白区切のコマンドをハイフンで管理しているため、ハイフンつなぎに変更
 	const MAN string = "man"
-	var command string = strings.Join(args, "-")
+	var command string = strings.Join(commands, "-")
 
 	// manコマンドを実行する
 	//   - manの結果には\bや\tが入っているためcolで
@@ -32,7 +44,7 @@ func ExecMan(args []string) string {
 		panic(errors.New("Error: No results"))
 	}
 
-	return string(out)
+	myself.ManResult = string(out)
 }
 
 /**
@@ -40,14 +52,14 @@ func ExecMan(args []string) string {
 * @params args 実行時引数
 * @params stackOptions 選択したオプション
 **/
-func CmdOutput(args []string, stackOptions []string) {
-	execWithStdin("stty", "-echo") // エコーバックを OFF
+func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
+	myself.execWithStdin("stty", "-echo") // エコーバックを OFF
 	// コマンドをターミナル上に出力
-	var command string = strings.Join(args, " ") + " " + strings.Join(stackOptions, " ")
+	var result string = strings.Join(commands, " ") + " " + strings.Join(options, " ")
 	// ターミナルをクリアする
-	robotgo.TypeStr(command)
-	time.Sleep(time.Millisecond * 15) // システムが記憶している入力をクリア
-	execWithStdin("stty", "echo")     // エコーバックを ON
+	robotgo.TypeStr(result)
+	time.Sleep(time.Millisecond * 15)    // システムが記憶している入力をクリア
+	myself.execWithStdin("stty", "echo") // エコーバックを ON
 }
 
 /**
@@ -55,7 +67,7 @@ func CmdOutput(args []string, stackOptions []string) {
 * @params name コマンド
 * @params option コマンドオプション
 **/
-func execWithStdin(name string, option ...string) {
+func (myself *CommandStruct) execWithStdin(name string, option ...string) {
 	c := exec.Command(name, option...)
 	c.Stdin = os.Stdin
 	c.Run()
