@@ -18,12 +18,20 @@ import (
  */
 func render(input *mio.InputStruct, list *mmodel.ListStruct, pagination *mpagination.PaginationStruct, window *mwindow.WindowInfoStruct) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+
+	// ページネーション設定
 	pagination.LocatePages(list.MapLineNumber(), window.Height)
+	// 基本Viewの描画
 	window.RenderQuery(input.Query)
 	window.RenderCursor(input.CursorPosX)
 	window.RenderOptionStack(input.Commands, input.Options)
 	window.RenderPageNumber(pagination.Page, pagination.MaxPage, input.Query)
-	window.RenderResult(pagination, list, input.Query)
+
+	var pageNum int = pagination.PageList[pagination.Page]
+	var nextPageNum int = pagination.PageList[pagination.Page+1]
+
+	// 結果データの描画
+	window.RenderResult(pageNum, nextPageNum, pagination.SelectedPos, list, input.Query)
 	termbox.Flush()
 }
 

@@ -21,7 +21,8 @@ func NewPagination() *PaginationStruct {
 }
 
 /*
- * @param manLists オプションとオプション説明が格納された文字列と、各オプション説明の行数の配列
+ * @param lineNumnbers 各オプション説明の行数の配列
+ * @param windowHeight ウィンドウの高さ
  * @description 各ページの先頭となるオプション配列manListsのindex番号が格納された配列を生成する
  */
 func (myself *PaginationStruct) LocatePages(lineNumnbers []int, windowHeight int) {
@@ -73,6 +74,7 @@ func (myself *PaginationStruct) NextLine() {
 
 /*
  * @description 前の行へ遷移
+ * @param maxLength 最大行数
  */
 func (myself *PaginationStruct) BackLine(maxLength int) {
 	if myself.SelectedPos < maxLength {

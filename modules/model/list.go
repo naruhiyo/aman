@@ -21,6 +21,12 @@ func NewList() *ListStruct {
 	}
 }
 
+/**
+* @description 	マッチ情報を構造体にセット
+* @params text 	テキスト
+* @params index インデックス
+* @return 			構造体
+**/
 func (myself *ListStruct) GetMatchedInfo(text string, index int) smodel.MatchedInfo {
 	return smodel.MatchedInfo{
 		Text:  text,
@@ -35,8 +41,7 @@ func (myself *ListStruct) GetMatchedInfo(text string, index int) smodel.MatchedI
 *   - 検索結果に対して`-`(または `--`) の出現位置(index)を計算する
 *   - 出現位置(index)の値だけ空白文字を生成し、オプションと結合する
 *   - 結合した値と元の値を比較し、一致すればオプションとみなす
-* @params output manコマンド実行結果
-* @return オプションテキストリスト
+* @params manResult manコマンド実行結果
 **/
 func (myself *ListStruct) AnalyzeMan(manResult string) {
 	// === 条件 ===
@@ -85,7 +90,6 @@ func (myself *ListStruct) AnalyzeMan(manResult string) {
 				continue
 			}
 
-			// fmt.Println(line)
 			isFinding = false
 			paddingCounts = width - len(line[definedOptionBlankCount:])
 			padding = strings.Repeat(" ", paddingCounts)
@@ -148,6 +152,7 @@ func (myself *ListStruct) IncrementalSearch(query string) {
 
 /*
  * @description LineNumber の配列を返す
+ * @return インデックスの配列
  */
 func (myself *ListStruct) MapLineNumber() []int {
 	var result []int = []int{}
@@ -159,6 +164,7 @@ func (myself *ListStruct) MapLineNumber() []int {
 
 /*
  * @description MatchedText の配列を返す
+ * @return テキストの配列
  */
 func (myself *ListStruct) MapMatchedText() []string {
 	var result []string = []string{}
@@ -168,12 +174,18 @@ func (myself *ListStruct) MapMatchedText() []string {
 	return result
 }
 
-// オプション条件を満たしているかをチェック
+/* @description オプション条件を満たしているかをチェック
+ * @param line 文字列
+ * @return 真偽値
+ */
 func (myself *ListStruct) isOptionText(line string) bool {
 	return strings.Contains(line, "-")
 }
 
-// isOptionHeaderText()内で生成する空白文字の文字数を求める
+/* @description isOptionHeaderText()内で生成する空白文字の文字数を求める
+ * @param line 文字列
+ * @return 文字数
+ */
 func (myself *ListStruct) getOptionHeaderBlankCounts(line string) int {
 	var count int = 0
 	if strings.Contains(line, "-") {
@@ -182,7 +194,10 @@ func (myself *ListStruct) getOptionHeaderBlankCounts(line string) int {
 	return count
 }
 
-// オプションのヘッダーであるかチェック（オプションの説明文にあるハイフンを弾く）
+/* オプションのヘッダーであるかチェック（オプションの説明文にあるハイフンを弾く）
+ * @param line 文字列
+ * @param count 空白文字数
+ */
 func (myself *ListStruct) isOptionHeaderText(line string, count int) bool {
 	var blanks string = strings.Repeat(" ", count)
 

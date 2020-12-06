@@ -14,7 +14,7 @@ import (
 type InputStruct sio.InputStruct
 
 /*
- * コンストラクタ
+ * @description コンストラクタ
  */
 func NewInput() *InputStruct {
 	input := &InputStruct{
@@ -86,6 +86,7 @@ func (myself *InputStruct) PutSpace() {
 
 /*
  * @description キー入力
+ * @param キーイベント
  */
 func (myself *InputStruct) PutKey(ev termbox.Event) {
 	myself.Query += string(ev.Ch)

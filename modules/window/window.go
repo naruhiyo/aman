@@ -6,7 +6,6 @@ import (
 	"unicode/utf8"
 
 	mmodel "github.com/aman/modules/model"
-	mpagination "github.com/aman/modules/pagination"
 	swindow "github.com/aman/struct/window"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
@@ -21,6 +20,9 @@ const (
 
 type WindowInfoStruct swindow.WindowInfo
 
+/*
+ * コンストラクタ作成
+ */
 func NewWindowInfo() *WindowInfoStruct {
 	width, height := termbox.Size()
 	return &WindowInfoStruct{
@@ -33,6 +35,9 @@ func NewWindowInfo() *WindowInfoStruct {
 
 /*
  * @description ページ番号を描画する
+ * @param page ページ番号
+ * @param maxPage 最大ページ件数
+ * @param query クエリ
  */
 func (myself *WindowInfoStruct) RenderPageNumber(page int, maxPage int, query string) {
 	var pageNumberText string = strconv.Itoa(page+1) + "/" + strconv.Itoa(maxPage+1)
@@ -61,11 +66,13 @@ func (myself *WindowInfoStruct) RenderOptionStack(commands []string, options []s
 
 /*
  * @description 検索結果を表示する
+ * @param pageNum ページの件数
+ * @param nextPageNum 次ページの件数
  * @param selectedPos プションの選択位置
- * @param result 抽出結果
- * @param pageList 各ページの先頭となるmanListのindex番号
+ * @param list 抽出結果
+ * @param query クエリ
  */
-func (myself *WindowInfoStruct) RenderResult(pagination *mpagination.PaginationStruct, list *mmodel.ListStruct, query string) {
+func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selectedPos int, list *mmodel.ListStruct, query string) {
 	myself.TextColor = termbox.ColorDefault
 	myself.BgColor = termbox.ColorDefault
 	// startLineは、次に表示する行の行番号(0スタート)を表す。
@@ -80,14 +87,14 @@ func (myself *WindowInfoStruct) RenderResult(pagination *mpagination.PaginationS
 		return
 	}
 
-	for i := pagination.PageList[pagination.Page]; i < pagination.PageList[pagination.Page+1]; i++ {
+	for i := pageNum; i < nextPageNum; i++ {
 		// Contentsの最終行がターミナルの最終行まで表示可能かどうかを判定している
 		// iocontroller.heightは1スタート、startLineは0スタート
 		// どちらも単位はターミナル上での1行
 		if myself.Height < startLine+strings.Count(list.Filtered[i].Contents, "\n") {
 			return
 		}
-		if pagination.SelectedPos == i {
+		if selectedPos == i {
 			// 選択行だけハイライト
 			myself.TextColor = SELECTED_TEXT_COLOR
 			myself.BgColor = SELECTED_BG_COLOR
@@ -111,7 +118,7 @@ func (myself *WindowInfoStruct) RenderResult(pagination *mpagination.PaginationS
  * @param x テキストの出現位置(x座標)
  * @param y テキストの出現位置(y座標)
  * @param texts 描画されるテキスト文字列
- * @param fg, bg 描画時の色（テキストと背景色）
+ * @param list 抽出結果
  */
 func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, list *mmodel.ListStruct) {
 	// 注目したいmatchedIndexesのindex番号
@@ -137,6 +144,7 @@ func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, li
 
 /*
  * @description 入力しているクエリを描画する
+ * @param query クエリ
  */
 func (myself *WindowInfoStruct) RenderQuery(query string) {
 	myself.renderTextLine(0, 0, "> "+query)
@@ -144,6 +152,7 @@ func (myself *WindowInfoStruct) RenderQuery(query string) {
 
 /*
  * @description カーソルを描画する
+ * @param cursorPosX カーソルの位置
  */
 func (myself *WindowInfoStruct) RenderCursor(cursorPosX int) {
 	termbox.SetCursor(cursorPosX, 0)
@@ -153,6 +162,8 @@ func (myself *WindowInfoStruct) RenderCursor(cursorPosX int) {
  * @brief originalText内に空白で区切られたqueryが、部分文字列として一致する
  *        先頭のindex番号及び一致したqueryのMatchedInfo配列を求める
  * @param originalText オプション説明文
+ * @param query クエリ
+ * @param list 抽出結果
  * @example originalText: "hoge hogera", query: "og a"の場合、
  *          matchedInfos: { MatchedInfo{ text: "og", index: 1 },
  *                          MatchedInfo{ text: "og", index: 6 },
@@ -207,6 +218,12 @@ func (myself *WindowInfoStruct) renderTextLine(x, y int, texts string) {
 	}
 }
 
+/*
+ * @description インデックスを取得
+ * @param index 選択されたインデックス
+ * @param list 抽出結果
+ * @return インデックス
+ */
 func (myself *WindowInfoStruct) getTargetIndex(index int, list *mmodel.ListStruct) int {
 	for targetIndex, matchedInfo := range list.Matched {
 		if index == matchedInfo.Index {
