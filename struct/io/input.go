@@ -1,8 +1,8 @@
 package sio
 
 /*
- * Commands
- * Options
+ * Commands 	入力コマンド
+ * Options	 	選択オプション
  * Query      検索クエリ
  * CursorPosX カーソルのx座標
  */
