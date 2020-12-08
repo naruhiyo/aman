@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	mmodel "github.com/aman/modules/model"
+	mmodel "github.com/aman/implement/model"
 	swindow "github.com/aman/struct/window"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"

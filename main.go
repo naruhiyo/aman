@@ -5,11 +5,11 @@ package main
  * s*** : 構造体モジュール
  */
 import (
-	mio "github.com/aman/modules/io"
-	mmodel "github.com/aman/modules/model"
-	mpagination "github.com/aman/modules/pagination"
-	mutil "github.com/aman/modules/util"
-	mwindow "github.com/aman/modules/window"
+	mio "github.com/aman/implement/io"
+	mmodel "github.com/aman/implement/model"
+	mpagination "github.com/aman/implement/pagination"
+	mutil "github.com/aman/implement/util"
+	mwindow "github.com/aman/implement/window"
 	"github.com/nsf/termbox-go"
 )
 
@@ -73,10 +73,12 @@ loop:
 		case termbox.KeyEsc:
 			break loop
 		case termbox.KeyArrowUp:
-			pagination.NextLine()
+			pagination.BackLine()
 		case termbox.KeyArrowDown:
-			var maxLength int = len(list.Filtered) - 1
-			pagination.BackLine(maxLength)
+			// 表示しているページ件数までしかカーソルを動かせないようにする
+			var list []int = pagination.PageList
+			var maxLength int = list[pagination.Page+1] - 1
+			pagination.NextLine(maxLength)
 		case termbox.KeyArrowRight:
 			pagination.NextPage()
 		case termbox.KeyArrowLeft:
