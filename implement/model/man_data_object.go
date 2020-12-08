@@ -8,13 +8,13 @@ import (
 	"github.com/nsf/termbox-go"
 )
 
-type ListStruct smodel.List
+type ManDataObjectStruct smodel.ManDataObject
 
 /*
  * コンストラクタ
  */
-func NewList() *ListStruct {
-	return &ListStruct{
+func NewManDataObject() *ManDataObjectStruct {
+	return &ManDataObjectStruct{
 		Original: []smodel.ManData{},
 		Filtered: []smodel.ManData{},
 		Matched:  []smodel.MatchedInfo{},
@@ -27,7 +27,7 @@ func NewList() *ListStruct {
 * @params index インデックス
 * @return 			構造体
 **/
-func (myself *ListStruct) GetMatchedInfo(text string, index int) smodel.MatchedInfo {
+func (myself *ManDataObjectStruct) GetMatchedInfo(text string, index int) smodel.MatchedInfo {
 	return smodel.MatchedInfo{
 		Text:  text,
 		Index: index,
@@ -43,7 +43,7 @@ func (myself *ListStruct) GetMatchedInfo(text string, index int) smodel.MatchedI
 *   - 結合した値と元の値を比較し、一致すればオプションとみなす
 * @params manResult manコマンド実行結果
 **/
-func (myself *ListStruct) AnalyzeMan(manResult string) {
+func (myself *ManDataObjectStruct) AnalyzeMan(manResult string) {
 	// === 条件 ===
 	// ハイフンまたはダブルハイフンで始まる英単語
 	var splitOutputs []string = strings.Split(manResult, "\n")
@@ -126,7 +126,7 @@ func (myself *ListStruct) AnalyzeMan(manResult string) {
 3. 取り出したクエリが、オプション説明文字列の部分文字列なら、次回に取り出すクエリに対する検索対象として、オプション説明文字列を配列に格納する
 4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
 */
-func (myself *ListStruct) IncrementalSearch(query string) {
+func (myself *ManDataObjectStruct) IncrementalSearch(query string) {
 	// クエリを空白区切りで取得
 	separatedQuery := strings.Fields(query)
 	myself.Filtered = myself.Original
@@ -154,7 +154,7 @@ func (myself *ListStruct) IncrementalSearch(query string) {
  * @description LineNumber の配列を返す
  * @return インデックスの配列
  */
-func (myself *ListStruct) MapLineNumber() []int {
+func (myself *ManDataObjectStruct) MapLineNumber() []int {
 	var result []int = []int{}
 	for i := 0; i < len(myself.Filtered); i++ {
 		result = append(result, myself.Filtered[i].LineNumber)
@@ -166,7 +166,7 @@ func (myself *ListStruct) MapLineNumber() []int {
  * @description MatchedText の配列を返す
  * @return テキストの配列
  */
-func (myself *ListStruct) MapMatchedText() []string {
+func (myself *ManDataObjectStruct) MapMatchedText() []string {
 	var result []string = []string{}
 	for i := 0; i < len(myself.Filtered); i++ {
 		result = append(result, myself.Matched[i].Text)
@@ -178,7 +178,7 @@ func (myself *ListStruct) MapMatchedText() []string {
  * @param line 文字列
  * @return 真偽値
  */
-func (myself *ListStruct) isOptionText(line string) bool {
+func (myself *ManDataObjectStruct) isOptionText(line string) bool {
 	return strings.Contains(line, "-")
 }
 
@@ -186,7 +186,7 @@ func (myself *ListStruct) isOptionText(line string) bool {
  * @param line 文字列
  * @return 文字数
  */
-func (myself *ListStruct) getOptionHeaderBlankCounts(line string) int {
+func (myself *ManDataObjectStruct) getOptionHeaderBlankCounts(line string) int {
 	var count int = 0
 	if strings.Contains(line, "-") {
 		count = strings.Index(line, "-")
@@ -198,7 +198,7 @@ func (myself *ListStruct) getOptionHeaderBlankCounts(line string) int {
  * @param line 文字列
  * @param count 空白文字数
  */
-func (myself *ListStruct) isOptionHeaderText(line string, count int) bool {
+func (myself *ManDataObjectStruct) isOptionHeaderText(line string, count int) bool {
 	var blanks string = strings.Repeat(" ", count)
 
 	// 先頭から文字を見たときにオプション条件を満たしているか確認する

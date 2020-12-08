@@ -16,7 +16,7 @@ import (
 /**
  * 描画処理
  */
-func render(input *mio.InputStruct, list *mmodel.ListStruct, pagination *mpagination.PaginationStruct, window *mwindow.WindowInfoStruct) {
+func render(input *mio.InputStruct, list *mmodel.ManDataObjectStruct, pagination *mpagination.PaginationStruct, window *mwindow.WindowInfoStruct) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	// ページネーション設定
@@ -28,7 +28,11 @@ func render(input *mio.InputStruct, list *mmodel.ListStruct, pagination *mpagina
 	window.RenderPageNumber(pagination.Page, pagination.MaxPage, input.Query)
 
 	var pageNum int = pagination.PageList[pagination.Page]
-	var nextPageNum int = pagination.PageList[pagination.Page+1]
+	var nextPageNum int = pageNum
+
+	if len(list.Filtered) > 0 {
+		nextPageNum = pagination.PageList[pagination.Page+1]
+	}
 
 	// 結果データの描画
 	window.RenderResult(pageNum, nextPageNum, pagination.SelectedPos, list, input.Query)
@@ -47,7 +51,7 @@ func main() {
 	var windowInfo *mwindow.WindowInfoStruct = mwindow.NewWindowInfo()
 	var pagination *mpagination.PaginationStruct = mpagination.NewPagination()
 	var input *mio.InputStruct = mio.NewInput()
-	var list *mmodel.ListStruct = mmodel.NewList()
+	var list *mmodel.ManDataObjectStruct = mmodel.NewManDataObject()
 	var command *mutil.CommandStruct = mutil.NewCommand()
 
 	// コマンド実行
@@ -76,9 +80,11 @@ loop:
 			pagination.BackLine()
 		case termbox.KeyArrowDown:
 			// 表示しているページ件数までしかカーソルを動かせないようにする
-			var list []int = pagination.PageList
-			var maxLength int = list[pagination.Page+1] - 1
-			pagination.NextLine(maxLength)
+			var pageList []int = pagination.PageList
+			if len(list.Filtered) > 0 {
+				var maxLength int = pageList[pagination.Page+1] - 1
+				pagination.NextLine(maxLength)
+			}
 		case termbox.KeyArrowRight:
 			pagination.NextPage()
 		case termbox.KeyArrowLeft:
