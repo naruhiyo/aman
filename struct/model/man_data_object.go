@@ -21,14 +21,12 @@ type MatchedInfo struct {
 }
 
 /*
- * @brief 空白で区切られたどのqueryが探索文字列内のどのindex番号から
- *        開始する部分文字列なのかを表す
- * Original
- * Filtered
- * text  空白で区切られたqueryの一要素
- * index 探索文字列内でtextが部分文字列として一致するindex番号の先頭
+ * Original 	Man実行結果配列
+ * Filtered		検索後のMan実行結果配列
+ * Matched  	検索してマッチした結果を格納する配列
+ * MatchedInfoStruct 構造体参照用
  */
-type List struct {
+type ManDataObject struct {
 	Original          []ManData
 	Filtered          []ManData
 	Matched           []MatchedInfo

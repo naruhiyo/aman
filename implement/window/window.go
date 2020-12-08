@@ -72,7 +72,7 @@ func (myself *WindowInfoStruct) RenderOptionStack(commands []string, options []s
  * @param list 抽出結果
  * @param query クエリ
  */
-func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selectedPos int, list *mmodel.ListStruct, query string) {
+func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selectedPos int, list *mmodel.ManDataObjectStruct, query string) {
 	myself.TextColor = termbox.ColorDefault
 	myself.BgColor = termbox.ColorDefault
 	// startLineは、次に表示する行の行番号(0スタート)を表す。
@@ -120,7 +120,7 @@ func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selec
  * @param texts 描画されるテキスト文字列
  * @param list 抽出結果
  */
-func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, list *mmodel.ListStruct) {
+func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, list *mmodel.ManDataObjectStruct) {
 	// 注目したいmatchedIndexesのindex番号
 	var textsRune = []rune(texts)
 	var matchedFg termbox.Attribute = MATCHED_TEXT_COLOR
@@ -176,7 +176,7 @@ func (myself *WindowInfoStruct) RenderCursor(cursorPosX int) {
  *  3. 2.で一致したindexの次の文字以降をtargetTextとして更新し、1.に戻る。
  *     targetText内に全queryが存在しなくなるまで繰り返す。
  */
-func (myself *WindowInfoStruct) searchMatchedText(originalText string, query string, list *mmodel.ListStruct) {
+func (myself *WindowInfoStruct) searchMatchedText(originalText string, query string, list *mmodel.ManDataObjectStruct) {
 	// 初期化
 	list.Matched = nil
 	// 探索文字列
@@ -224,7 +224,7 @@ func (myself *WindowInfoStruct) renderTextLine(x, y int, texts string) {
  * @param list 抽出結果
  * @return インデックス
  */
-func (myself *WindowInfoStruct) getTargetIndex(index int, list *mmodel.ListStruct) int {
+func (myself *WindowInfoStruct) getTargetIndex(index int, list *mmodel.ManDataObjectStruct) int {
 	for targetIndex, matchedInfo := range list.Matched {
 		if index == matchedInfo.Index {
 			return targetIndex
