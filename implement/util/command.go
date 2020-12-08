@@ -29,14 +29,13 @@ func NewCommand() *CommandStruct {
 **/
 func (myself *CommandStruct) ExecMan(commands []string) {
 	// man コマンドは空白区切のコマンドをハイフンで管理しているため、ハイフンつなぎに変更
-	const MAN string = "man"
 	var command string = strings.Join(commands, "-")
 
 	// manコマンドを実行する
 	//   - manの結果には\bや\tが入っているためcolで
 	//   - \bを除外し、\tを半角スペースに変換する
 	out, err := pipeline.Output(
-		[]string{MAN, command},
+		[]string{"man", command},
 		[]string{"col", "-bx"},
 	)
 
@@ -49,17 +48,20 @@ func (myself *CommandStruct) ExecMan(commands []string) {
 
 /**
 * @description オプション付きコマンドをターミナルに出力する
-* @params args 実行時引数
-* @params stackOptions 選択したオプション
+* @params commands 実行時引数
+* @params options 選択したオプション
 **/
 func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
-	myself.execWithStdin("stty", "-echo") // エコーバックを OFF
+	// エコーバックを OFF
+	myself.execWithStdin("stty", "-echo")
 	// コマンドをターミナル上に出力
 	var result string = strings.Join(commands, " ") + " " + strings.Join(options, " ")
 	// ターミナルをクリアする
 	robotgo.TypeStr(result)
-	time.Sleep(time.Millisecond * 15)    // システムが記憶している入力をクリア
-	myself.execWithStdin("stty", "echo") // エコーバックを ON
+	// システムが記憶している入力をクリア
+	time.Sleep(time.Millisecond * 15)
+	// エコーバックを ON
+	myself.execWithStdin("stty", "echo")
 }
 
 /**

@@ -66,9 +66,9 @@ func (myself *PaginationStruct) LocatePages(lineNumnbers []int, windowHeight int
 /*
  * @description 次の行へ遷移
  */
-func (myself *PaginationStruct) NextLine() {
-	if myself.SelectedPos > 0 {
-		myself.SelectedPos--
+func (myself *PaginationStruct) NextLine(maxLength int) {
+	if myself.SelectedPos < maxLength {
+		myself.SelectedPos++
 	}
 }
 
@@ -76,9 +76,9 @@ func (myself *PaginationStruct) NextLine() {
  * @description 前の行へ遷移
  * @param maxLength 最大行数
  */
-func (myself *PaginationStruct) BackLine(maxLength int) {
-	if myself.SelectedPos < maxLength {
-		myself.SelectedPos++
+func (myself *PaginationStruct) BackLine() {
+	if myself.SelectedPos > 0 {
+		myself.SelectedPos--
 	}
 }
 
@@ -90,6 +90,7 @@ func (myself *PaginationStruct) NextPage() {
 	if myself.MaxPage < myself.Page {
 		myself.Page = myself.MaxPage
 	}
+	myself.SelectedPos = myself.PageList[myself.Page]
 }
 
 /*
@@ -100,12 +101,13 @@ func (myself *PaginationStruct) BackPage() {
 	if myself.Page < 0 {
 		myself.Page = 0
 	}
+	myself.SelectedPos = myself.PageList[myself.Page]
 }
 
 /*
  * @description リセット
  */
-func (mysel *PaginationStruct) Reset() {
-	mysel.Page = 0
-	mysel.SelectedPos = 0
+func (myself *PaginationStruct) Reset() {
+	myself.Page = 0
+	myself.SelectedPos = 0
 }
