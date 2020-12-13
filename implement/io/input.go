@@ -1,4 +1,4 @@
-package mio
+package iio
 
 import (
 	"errors"
@@ -27,8 +27,8 @@ func NewInput() *InputStruct {
 	return input
 }
 
-/**
-* @description コマンドライン引数を取得
+/*
+ * @description コマンドライン引数を取得
  */
 func (myself *InputStruct) Parse() {
 	flag.Parse()

@@ -1,4 +1,4 @@
-package mpagination
+package ipagination
 
 import (
 	"errors"
@@ -21,9 +21,9 @@ func NewPagination() *PaginationStruct {
 }
 
 /*
+ * @description 各ページの先頭となるオプション配列manListsのindex番号が格納された配列を生成する
  * @param lineNumnbers 各オプション説明の行数の配列
  * @param windowHeight ウィンドウの高さ
- * @description 各ページの先頭となるオプション配列manListsのindex番号が格納された配列を生成する
  */
 func (myself *PaginationStruct) LocatePages(lineNumnbers []int, windowHeight int) {
 	var maxLineNumber = -1

@@ -10,7 +10,7 @@ type ManData struct {
 }
 
 /*
- * @brief 空白で区切られたどのqueryが探索文字列内のどのindex番号から
+ * @description 空白で区切られたどのqueryが探索文字列内のどのindex番号から
  *        開始する部分文字列なのかを表す
  * text  空白で区切られたqueryの一要素
  * index 探索文字列内でtextが部分文字列として一致するindex番号の先頭

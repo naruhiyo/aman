@@ -1,22 +1,22 @@
 package main
 
 /**
- * m*** : 実装モジュール
+ * i*** : 実装モジュール
  * s*** : 構造体モジュール
  */
 import (
-	mio "github.com/aman/implement/io"
-	mmodel "github.com/aman/implement/model"
-	mpagination "github.com/aman/implement/pagination"
-	mutil "github.com/aman/implement/util"
-	mwindow "github.com/aman/implement/window"
+	iio "github.com/aman/implement/io"
+	imodel "github.com/aman/implement/model"
+	ipagination "github.com/aman/implement/pagination"
+	iutil "github.com/aman/implement/util"
+	iwindow "github.com/aman/implement/window"
 	"github.com/nsf/termbox-go"
 )
 
 /**
  * 描画処理
  */
-func render(input *mio.InputStruct, list *mmodel.ManDataObjectStruct, pagination *mpagination.PaginationStruct, window *mwindow.WindowInfoStruct) {
+func render(input *iio.InputStruct, list *imodel.ManDataObjectStruct, pagination *ipagination.PaginationStruct, window *iwindow.WindowInfoStruct) {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 
 	// ページネーション設定
@@ -48,11 +48,11 @@ func main() {
 	termbox.SetOutputMode(termbox.Output256)
 
 	// 初期化
-	var windowInfo *mwindow.WindowInfoStruct = mwindow.NewWindowInfo()
-	var pagination *mpagination.PaginationStruct = mpagination.NewPagination()
-	var input *mio.InputStruct = mio.NewInput()
-	var list *mmodel.ManDataObjectStruct = mmodel.NewManDataObject()
-	var command *mutil.CommandStruct = mutil.NewCommand()
+	var windowInfo *iwindow.WindowInfoStruct = iwindow.NewWindowInfo()
+	var pagination *ipagination.PaginationStruct = ipagination.NewPagination()
+	var input *iio.InputStruct = iio.NewInput()
+	var list *imodel.ManDataObjectStruct = imodel.NewManDataObject()
+	var command *iutil.CommandStruct = iutil.NewCommand()
 
 	// コマンド実行
 	command.ExecMan(input.Commands)
