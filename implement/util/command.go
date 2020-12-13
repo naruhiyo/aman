@@ -1,4 +1,4 @@
-package mutil
+package iutil
 
 import (
 	"errors"
@@ -23,10 +23,10 @@ func NewCommand() *CommandStruct {
 	}
 }
 
-/**
-* @description man コマンドを実行する
-* @params args 実行時引数
-**/
+/*
+ * @description man コマンドを実行する
+ * @params args 実行時引数
+ */
 func (myself *CommandStruct) ExecMan(commands []string) {
 	// man コマンドは空白区切のコマンドをハイフンで管理しているため、ハイフンつなぎに変更
 	var command string = strings.Join(commands, "-")
@@ -46,11 +46,11 @@ func (myself *CommandStruct) ExecMan(commands []string) {
 	myself.ManResult = string(out)
 }
 
-/**
-* @description オプション付きコマンドをターミナルに出力する
-* @params commands 実行時引数
-* @params options 選択したオプション
-**/
+/*
+ * @description オプション付きコマンドをターミナルに出力する
+ * @params commands 実行時引数
+ * @params options 選択したオプション
+ */
 func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	// エコーバックを OFF
 	myself.execWithStdin("stty", "-echo")
@@ -64,11 +64,11 @@ func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	myself.execWithStdin("stty", "echo")
 }
 
-/**
-* @description コマンドを標準入力から実行する
-* @params name コマンド
-* @params option コマンドオプション
-**/
+/*
+ * @description コマンドを標準入力から実行する
+ * @params name コマンド
+ * @params option コマンドオプション
+ */
 func (myself *CommandStruct) execWithStdin(name string, option ...string) {
 	c := exec.Command(name, option...)
 	c.Stdin = os.Stdin

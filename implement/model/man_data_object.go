@@ -1,4 +1,4 @@
-package mmodel
+package imodel
 
 import (
 	"bytes"
@@ -21,12 +21,12 @@ func NewManDataObject() *ManDataObjectStruct {
 	}
 }
 
-/**
-* @description 	マッチ情報を構造体にセット
-* @params text 	テキスト
-* @params index インデックス
-* @return 			構造体
-**/
+/*
+ * @description 	マッチ情報を構造体にセット
+ * @params text 	テキスト
+ * @params index インデックス
+ * @return 			構造体
+ */
 func (myself *ManDataObjectStruct) GetMatchedInfo(text string, index int) smodel.MatchedInfo {
 	return smodel.MatchedInfo{
 		Text:  text,
@@ -34,15 +34,15 @@ func (myself *ManDataObjectStruct) GetMatchedInfo(text string, index int) smodel
 	}
 }
 
-/**
-* @description コマンド実行結果からオプションを抽出する
-* オプションの判定方法
-*   - `-` (または `--`) を検索する
-*   - 検索結果に対して`-`(または `--`) の出現位置(index)を計算する
-*   - 出現位置(index)の値だけ空白文字を生成し、オプションと結合する
-*   - 結合した値と元の値を比較し、一致すればオプションとみなす
-* @params manResult manコマンド実行結果
-**/
+/*
+ * @description コマンド実行結果からオプションを抽出する
+ * オプションの判定方法
+ *   - `-` (または `--`) を検索する
+ *   - 検索結果に対して`-`(または `--`) の出現位置(index)を計算する
+ *   - 出現位置(index)の値だけ空白文字を生成し、オプションと結合する
+ *   - 結合した値と元の値を比較し、一致すればオプションとみなす
+ * @params manResult manコマンド実行結果
+ */
 func (myself *ManDataObjectStruct) AnalyzeMan(manResult string) {
 	// === 条件 ===
 	// ハイフンまたはダブルハイフンで始まる英単語
@@ -119,12 +119,12 @@ func (myself *ManDataObjectStruct) AnalyzeMan(manResult string) {
 }
 
 /*
-@param query   クエリ
-@description
-1. クエリを空白類で区切って配列化する
-2. 区切ったクエリを1要素ごとに取り出す
-3. 取り出したクエリが、オプション説明文字列の部分文字列なら、次回に取り出すクエリに対する検索対象として、オプション説明文字列を配列に格納する
-4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
+ * @param query   クエリ
+ * @description
+    1. クエリを空白類で区切って配列化する
+    2. 区切ったクエリを1要素ごとに取り出す
+    3. 取り出したクエリが、オプション説明文字列の部分文字列なら、次回に取り出すクエリに対する検索対象として、オプション説明文字列を配列に格納する
+    4. 区切ったクエリをすべて取り出し終えるか、次回の検索対象のオプション説明文字列が無くなるまで2.と3.を繰り返す
 */
 func (myself *ManDataObjectStruct) IncrementalSearch(query string) {
 	// クエリを空白区切りで取得
@@ -174,7 +174,8 @@ func (myself *ManDataObjectStruct) MapMatchedText() []string {
 	return result
 }
 
-/* @description オプション条件を満たしているかをチェック
+/*
+ * @description オプション条件を満たしているかをチェック
  * @param line 文字列
  * @return 真偽値
  */
@@ -182,7 +183,8 @@ func (myself *ManDataObjectStruct) isOptionText(line string) bool {
 	return strings.Contains(line, "-")
 }
 
-/* @description isOptionHeaderText()内で生成する空白文字の文字数を求める
+/*
+ * @description isOptionHeaderText()内で生成する空白文字の文字数を求める
  * @param line 文字列
  * @return 文字数
  */
@@ -194,7 +196,8 @@ func (myself *ManDataObjectStruct) getOptionHeaderBlankCounts(line string) int {
 	return count
 }
 
-/* オプションのヘッダーであるかチェック（オプションの説明文にあるハイフンを弾く）
+/*
+ * @description オプションのヘッダーであるかチェック（オプションの説明文にあるハイフンを弾く）
  * @param line 文字列
  * @param count 空白文字数
  */
