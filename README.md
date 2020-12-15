@@ -17,9 +17,13 @@ Autocomplete option insert tool.
 
 ![Filter](https://user-images.githubusercontent.com/16721102/101240747-90142b00-3734-11eb-9879-bd7fdc993b6a.gif)
 
-- Select options
+- Select option
 
 ![Select](https://user-images.githubusercontent.com/16721102/101240742-88ed1d00-3734-11eb-9ff9-36943ef9419d.gif)
+
+- Select multiple options
+
+![Select](https://user-images.githubusercontent.com/28133383/102232345-56ac9e00-3f32-11eb-8260-15b99545f1b6.gif)
 
 - Output the input command and selected options to your console
 
