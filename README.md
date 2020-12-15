@@ -25,10 +25,12 @@ Autocomplete option insert tool.
 
 ![Output](https://user-images.githubusercontent.com/16721102/101240745-8db1d100-3734-11eb-89f3-915a7f8a4a5b.gif)
 
-### Getting started
+### Installation
 
-```bash
-
+#### macOS
+```console
+$ brew tap naruhiyo/aman
+$ brew install aman
 ```
 
 ### Contributors
