@@ -1,11 +1,11 @@
-package mwindow
+package iwindow
 
 import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
 
-	mmodel "github.com/aman/implement/model"
+	imodel "github.com/aman/implement/model"
 	swindow "github.com/aman/struct/window"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
@@ -72,7 +72,7 @@ func (myself *WindowInfoStruct) RenderOptionStack(commands []string, options []s
  * @param list 抽出結果
  * @param query クエリ
  */
-func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selectedPos int, list *mmodel.ManDataObjectStruct, query string) {
+func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selectedPos int, list *imodel.ManDataObjectStruct, query string) {
 	myself.TextColor = termbox.ColorDefault
 	myself.BgColor = termbox.ColorDefault
 	// startLineは、次に表示する行の行番号(0スタート)を表す。
@@ -120,7 +120,7 @@ func (myself *WindowInfoStruct) RenderResult(pageNum int, nextPageNum int, selec
  * @param texts 描画されるテキスト文字列
  * @param list 抽出結果
  */
-func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, list *mmodel.ManDataObjectStruct) {
+func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, list *imodel.ManDataObjectStruct) {
 	// 注目したいmatchedIndexesのindex番号
 	var textsRune = []rune(texts)
 	var matchedFg termbox.Attribute = MATCHED_TEXT_COLOR
@@ -159,8 +159,13 @@ func (myself *WindowInfoStruct) RenderCursor(cursorPosX int) {
 }
 
 /*
- * @brief originalText内に空白で区切られたqueryが、部分文字列として一致する
- *        先頭のindex番号及び一致したqueryのMatchedInfo配列を求める
+ * @description originalText内に空白で区切られたqueryが、部分文字列として一致する
+ *        			先頭のindex番号及び一致したqueryのMatchedInfo配列を求める
+ *  1. iocontroller.queryを空白区切りに分割し、separetedQueryに格納する
+ *  2. separetedQueryの各要素(query)に対し、targetText内にqueryが部分文字列として存在するかチェックする
+ *  2. 部分文字列なら、先頭のindexをmatchedInfo.index, MatchedInfo.textをqueryとして、appendする
+ *  3. 2.で一致したindexの次の文字以降をtargetTextとして更新し、1.に戻る。
+ *     targetText内に全queryが存在しなくなるまで繰り返す。
  * @param originalText オプション説明文
  * @param query クエリ
  * @param list 抽出結果
@@ -169,14 +174,8 @@ func (myself *WindowInfoStruct) RenderCursor(cursorPosX int) {
  *                          MatchedInfo{ text: "og", index: 6 },
  *                          MatchedInfo{ text: "a", index: 10 },
  *                        }
- * @description
- *  1. iocontroller.queryを空白区切りに分割し、separetedQueryに格納する
- *  2. separetedQueryの各要素(query)に対し、targetText内にqueryが部分文字列として存在するかチェックする
- *  2. 部分文字列なら、先頭のindexをmatchedInfo.index, MatchedInfo.textをqueryとして、appendする
- *  3. 2.で一致したindexの次の文字以降をtargetTextとして更新し、1.に戻る。
- *     targetText内に全queryが存在しなくなるまで繰り返す。
  */
-func (myself *WindowInfoStruct) searchMatchedText(originalText string, query string, list *mmodel.ManDataObjectStruct) {
+func (myself *WindowInfoStruct) searchMatchedText(originalText string, query string, list *imodel.ManDataObjectStruct) {
 	// 初期化
 	list.Matched = nil
 	// 探索文字列
@@ -224,7 +223,7 @@ func (myself *WindowInfoStruct) renderTextLine(x, y int, texts string) {
  * @param list 抽出結果
  * @return インデックス
  */
-func (myself *WindowInfoStruct) getTargetIndex(index int, list *mmodel.ManDataObjectStruct) int {
+func (myself *WindowInfoStruct) getTargetIndex(index int, list *imodel.ManDataObjectStruct) int {
 	for targetIndex, matchedInfo := range list.Matched {
 		if index == matchedInfo.Index {
 			return targetIndex
