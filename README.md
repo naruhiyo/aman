@@ -1,11 +1,11 @@
 ## aman
 
-Autocomplete option insert tool.
-
 [![Go Report Card](https://goreportcard.com/badge/github.com/naruhiyo/aman)](https://goreportcard.com/report/github.com/naruhiyo/aman)
 [![Workflow](https://github.com/naruhiyo/aman/workflows/reviewdog/badge.svg)](https://github.com/naruhiyo/aman/actions?query=workflow%3Areviewdog)
 [![GitHub issues](https://img.shields.io/github/issues/naruhiyo/aman.svg)](https://github.com/yangwenmai/how-to-add-badge-in-github-readme/issues)
 [![License: MIT](https://img.shields.io/badge/license-MIT-teal.svg)](https://github.com/naruhiyo/aman/blob/master/LICENSE)
+
+***A***ssistant tool to get options easily from ***man***.
 
 ### Features
 
