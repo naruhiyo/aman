@@ -5,11 +5,11 @@ package main
  * s*** : 構造体モジュール
  */
 import (
-	iio "github.com/aman/implement/io"
-	imodel "github.com/aman/implement/model"
-	ipagination "github.com/aman/implement/pagination"
-	iutil "github.com/aman/implement/util"
-	iwindow "github.com/aman/implement/window"
+	iio "aman/implement/io"
+	imodel "aman/implement/model"
+	ipagination "aman/implement/pagination"
+	iutil "aman/implement/util"
+	iwindow "aman/implement/window"
 	"github.com/nsf/termbox-go"
 )
 

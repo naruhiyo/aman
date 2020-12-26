@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	smodel "github.com/aman/struct/model"
+	smodel "aman/struct/model"
 	"github.com/nsf/termbox-go"
 )
 
