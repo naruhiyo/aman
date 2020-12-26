@@ -11,16 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # See: https://goreleaser.com/ci/actions/
+      - name: setup env
+        shell: bash
+        run: |
+          echo "::set-env name=GOPATH::${{ github.workspace }}/go"
+          echo "::add-path::${{ github.workspace }}/go/bin"
 
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
         with:
           go-version: 1.15
         id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # See: https://goreleaser.com/ci/actions/
+          path: go/src/github.com/${{ github.repository }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@master
