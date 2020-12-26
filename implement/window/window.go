@@ -5,8 +5,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	imodel "github.com/aman/implement/model"
-	swindow "github.com/aman/struct/window"
+	imodel "github.com/naruhiyo/aman/implement/model"
+	swindow "github.com/naruhiyo/aman/struct/window"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )

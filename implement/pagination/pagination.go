@@ -3,7 +3,7 @@ package ipagination
 import (
 	"errors"
 
-	spagination "github.com/aman/struct/pagination"
+	spagination "github.com/naruhiyo/aman/struct/pagination"
 )
 
 type PaginationStruct spagination.Pagination
