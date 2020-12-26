@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "::set-env name=GOPATH::${{ github.workspace }}/go"
           echo "::add-path::${{ github.workspace }}/go/bin"
-
+        working-directory: ${{ github.workspace }}/go
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
         with:
