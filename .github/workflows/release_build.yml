@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "::set-env name=GOPATH::${{ github.workspace }}/go"
           echo "::add-path::${{ github.workspace }}/go/bin"
-        working-directory: ${{ github.workspace }}/go
+
       - name: Set up Go 1.15
         uses: actions/setup-go@v2
         with:
@@ -28,6 +28,7 @@ jobs:
         with:
           fetch-depth: 0 # See: https://goreleaser.com/ci/actions/
           path: go/src/github.com/${{ github.repository }}
+        working-directory: ${{ github.workspace }}/go
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@master
