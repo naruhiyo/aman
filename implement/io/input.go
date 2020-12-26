@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	sio "github.com/aman/struct/io"
+	sio "aman/struct/io"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
