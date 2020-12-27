@@ -35,7 +35,6 @@ brews:
 - tap:
     owner: naruhiyo
     name: homebrew-aman
-    token: "{{ secrets.GO_RELEASER_GITHUB_TOKEN }}"
   folder: Formula
   homepage: https://github.com/naruhiyo/aman
   description: aman
