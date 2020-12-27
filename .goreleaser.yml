@@ -31,3 +31,11 @@ archives:
       amd64: amd64
 release:
   prerelease: auto
+brews:
+- tap:
+    owner: naruhiyo
+    name: homebrew-aman
+    token: "{{ github.token }}"
+  folder: Formula
+  homepage: https://github.com/naruhiyo/aman
+  description: aman
