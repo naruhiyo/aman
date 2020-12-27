@@ -34,7 +34,7 @@
 #### macOS
 ```console
 $ brew tap naruhiyo/aman
-$ brew install aman
+$ brew install naruhiyo/aman/aman
 ```
 
 ### Contributors
