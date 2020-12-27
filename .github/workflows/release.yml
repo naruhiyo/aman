@@ -23,8 +23,8 @@ jobs:
             gobjc++
       - name: OSXCross for CGO Support
         run: |
-          mkdir ../../osxcross
-          git clone https://github.com/plentico/osxcross-target.git ../../osxcross/target
+          mkdir /home/runner/work/osxcross
+          git clone https://github.com/plentico/osxcross-target.git /home/runner/work/osxcross/target
       - name: Setup Go
         uses: actions/setup-go@v1
         with:
