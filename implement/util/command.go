@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	sutil "github.com/aman/struct/util"
+	sutil "aman/struct/util"
 	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
 )
