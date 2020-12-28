@@ -130,7 +130,7 @@ func (myself *WindowInfoStruct) renderColoredTextLine(x, y int, texts string, li
 			var targetIndex = myself.getTargetIndex(index, list)
 			if targetIndex != -1 {
 				for _, qr := range list.Matched[targetIndex].Text {
-					termbox.SetCell(x, y, qr, matchedFg, termbox.ColorDefault)
+					termbox.SetCell(x, y, qr, matchedFg, myself.BgColor)
 					x += runewidth.RuneWidth(qr)
 				}
 				index += len(list.Matched[targetIndex].Text) - 1
