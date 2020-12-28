@@ -16,6 +16,8 @@ import (
 	iwindow "aman/implement/window"
 )
 
+var Version string // バージョン情報
+
 /**
  * 描画処理
  */
@@ -56,19 +58,19 @@ func postExecMain() {
 func main() {
 	// panic時には、端末設定をデフォルトに戻す
 	defer postExecMain()
+	// 初期化
+	var windowInfo *iwindow.WindowInfoStruct = iwindow.NewWindowInfo()
+	var pagination *ipagination.PaginationStruct = ipagination.NewPagination()
+	var input *iio.InputStruct = iio.NewInput(Version)
+	var list *imodel.ManDataObjectStruct = imodel.NewManDataObject()
+	var command *iutil.CommandStruct = iutil.NewCommand()
+
 	// 標準入力有効化
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
 	}
 	termbox.SetOutputMode(termbox.Output256)
-
-	// 初期化
-	var windowInfo *iwindow.WindowInfoStruct = iwindow.NewWindowInfo()
-	var pagination *ipagination.PaginationStruct = ipagination.NewPagination()
-	var input *iio.InputStruct = iio.NewInput()
-	var list *imodel.ManDataObjectStruct = imodel.NewManDataObject()
-	var command *iutil.CommandStruct = iutil.NewCommand()
 
 	// コマンド実行
 	command.ExecMan(input.Commands)

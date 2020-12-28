@@ -1,8 +1,9 @@
 package iio
 
 import (
-	"errors"
 	"flag"
+	"fmt"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -14,16 +15,22 @@ import (
 
 type InputStruct sio.InputStruct
 
+var (
+	appVersion  string
+	versionFlag = flag.Bool("v", false, "show version")
+)
+
 /*
  * @description コンストラクタ
  */
-func NewInput() *InputStruct {
+func NewInput(version string) *InputStruct {
 	input := &InputStruct{
 		Commands:   []string{},
 		Options:    []string{},
 		Query:      "",
 		CursorPosX: 2,
 	}
+	appVersion = version
 	input.Parse()
 	return input
 }
@@ -33,10 +40,20 @@ func NewInput() *InputStruct {
  */
 func (myself *InputStruct) Parse() {
 	flag.Parse()
+
+	// バージョン表示
+	if *versionFlag {
+		fmt.Println(appVersion)
+		os.Exit(0)
+	}
+
 	args := flag.Args()
 
+	// 引数がない場合はヘルプ表示
 	if len(args) < 1 {
-		panic(errors.New("Error: No arguments"))
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+		os.Exit(0)
 	}
 
 	myself.Commands = args
