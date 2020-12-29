@@ -2,6 +2,7 @@ package iutil
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -54,7 +55,7 @@ func (myself *CommandStruct) ExecMan(commands []string) {
  */
 func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	// エコーバックを OFF
-	myself.ExecWithStdin("stty", "-echo")
+	myself.execWithStdin("stty", "-echo")
 	// コマンドをターミナル上に出力
 	var result string = strings.Join(commands, " ") + " " + strings.Join(options, " ")
 	// ターミナルをクリアする
@@ -62,7 +63,17 @@ func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	// システムが記憶している入力をクリア
 	time.Sleep(time.Millisecond * 15)
 	// エコーバックを ON
-	myself.ExecWithStdin("stty", "echo")
+	myself.execWithStdin("stty", "echo")
+}
+
+/**
+ * main実行後の後処理
+ */
+func (myself *CommandStruct) PostExecMain() {
+	if r := recover(); r != nil {
+		myself.execWithStdin("stty", "sane")
+		fmt.Printf("Terminated with error: %v\n", r)
+	}
 }
 
 /*
@@ -70,7 +81,7 @@ func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
  * @params name コマンド
  * @params option コマンドオプション
  */
-func (myself *CommandStruct) ExecWithStdin(name string, option ...string) {
+func (myself *CommandStruct) execWithStdin(name string, option ...string) {
 	c := exec.Command(name, option...)
 	c.Stdin = os.Stdin
 	c.Run()

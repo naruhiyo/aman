@@ -1,6 +1,7 @@
 package iio
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -22,10 +23,9 @@ var (
 
 const (
 	optionText = "options arguments\n"
-	usageText  = "usage:\n" +
-		"  - Input `aman` and `YOUR_COMMAND` like `aman git`, `aman ls`, or `aman git status`\n" +
-		"  - Display options and you can select some one\n" +
-		"  - Output the integrated commands to your console\n"
+	usageText  = "usage: aman <command> [arguments]\n" +
+		"  <command>: command which has man result (ls, git,...)\n" +
+		" [arguments]: arguments which command have (`status` for `git status`)\n"
 )
 
 /*
@@ -39,20 +39,19 @@ func NewInput(version string) *InputStruct {
 		CursorPosX: 2,
 	}
 	input.Version = version
-	input.Parse()
 	return input
 }
 
 /*
  * @description コマンドライン引数を取得
  */
-func (myself *InputStruct) Parse() {
+func (myself *InputStruct) Parse() error {
 	flag.Parse()
 
 	// バージョン表示
 	if *versionFlag {
 		fmt.Println(myself.Version)
-		os.Exit(0)
+		return errors.New("")
 	}
 
 	args := flag.Args()
@@ -62,10 +61,11 @@ func (myself *InputStruct) Parse() {
 		fmt.Fprintf(os.Stderr, optionText)
 		flag.PrintDefaults()
 		fmt.Fprintf(os.Stderr, usageText)
-		os.Exit(0)
+		return errors.New("")
 	}
 
 	myself.Commands = args
+	return nil
 }
 
 /*
