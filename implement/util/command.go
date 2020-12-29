@@ -8,6 +8,7 @@ import (
 	"time"
 
 	sutil "aman/struct/util"
+
 	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
 )
@@ -40,7 +41,7 @@ func (myself *CommandStruct) ExecMan(commands []string) {
 	)
 
 	if err != nil {
-		panic(errors.New("Error: No results"))
+		panic(errors.New("No man command results"))
 	}
 
 	myself.ManResult = string(out)
