@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"strings"
 
-	smodel "aman/struct/model"
 	"github.com/nsf/termbox-go"
+
+	smodel "aman/struct/model"
 )
 
 type ManDataObjectStruct smodel.ManDataObject

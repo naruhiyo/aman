@@ -5,15 +5,15 @@ package main
  * s*** : 構造体モジュール
  */
 import (
-	"log"
-	"runtime/debug"
+	"fmt"
+
+	"github.com/nsf/termbox-go"
 
 	iio "aman/implement/io"
 	imodel "aman/implement/model"
 	ipagination "aman/implement/pagination"
 	iutil "aman/implement/util"
 	iwindow "aman/implement/window"
-	"github.com/nsf/termbox-go"
 )
 
 /**
@@ -49,7 +49,7 @@ func postExecMain() {
 	if r := recover(); r != nil {
 		var recoverCommand *iutil.CommandStruct = iutil.NewCommand()
 		recoverCommand.ExecWithStdin("stty", "sane")
-		log.Printf("Recovered. %v\nStack:\n%s", r, debug.Stack())
+		fmt.Printf("Terminated with error: %v\n", r)
 	}
 }
 
