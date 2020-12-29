@@ -5,10 +5,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	imodel "aman/implement/model"
-	swindow "aman/struct/window"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
+
+	imodel "aman/implement/model"
+	swindow "aman/struct/window"
 )
 
 const (

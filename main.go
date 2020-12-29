@@ -5,14 +5,15 @@ package main
  * s*** : 構造体モジュール
  */
 import (
+	"fmt"
+
+	"github.com/nsf/termbox-go"
+
 	iio "aman/implement/io"
 	imodel "aman/implement/model"
 	ipagination "aman/implement/pagination"
 	iutil "aman/implement/util"
 	iwindow "aman/implement/window"
-	"fmt"
-
-	"github.com/nsf/termbox-go"
 )
 
 /**
