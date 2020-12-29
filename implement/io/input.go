@@ -6,9 +6,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	sio "aman/struct/io"
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
+
+	sio "aman/struct/io"
 )
 
 type InputStruct sio.InputStruct

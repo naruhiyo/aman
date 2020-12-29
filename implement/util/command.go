@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	sutil "aman/struct/util"
-
 	"github.com/go-vgo/robotgo"
 	"github.com/mattn/go-pipeline"
+
+	sutil "aman/struct/util"
 )
 
 type CommandStruct sutil.CommandStruct
