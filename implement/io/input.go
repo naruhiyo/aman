@@ -16,8 +16,16 @@ import (
 type InputStruct sio.InputStruct
 
 var (
-	appVersion  string
 	versionFlag = flag.Bool("v", false, "show version")
+	helpFlag    = flag.Bool("h", false, "show help")
+)
+
+const (
+	optionText = "options arguments\n"
+	usageText  = "usage:\n" +
+		"  - Input `aman` and `YOUR_COMMAND` like `aman git`, `aman ls`, or `aman git status`\n" +
+		"  - Display options and you can select some one\n" +
+		"  - Output the integrated commands to your console\n"
 )
 
 /*
@@ -30,7 +38,7 @@ func NewInput(version string) *InputStruct {
 		Query:      "",
 		CursorPosX: 2,
 	}
-	appVersion = version
+	input.Version = version
 	input.Parse()
 	return input
 }
@@ -43,16 +51,17 @@ func (myself *InputStruct) Parse() {
 
 	// バージョン表示
 	if *versionFlag {
-		fmt.Println(appVersion)
+		fmt.Println(myself.Version)
 		os.Exit(0)
 	}
 
 	args := flag.Args()
 
 	// 引数がない場合はヘルプ表示
-	if len(args) < 1 {
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+	if len(args) < 1 || *helpFlag {
+		fmt.Fprintf(os.Stderr, optionText)
 		flag.PrintDefaults()
+		fmt.Fprintf(os.Stderr, usageText)
 		os.Exit(0)
 	}
 
