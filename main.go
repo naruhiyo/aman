@@ -5,6 +5,9 @@ package main
  * s*** : 構造体モジュール
  */
 import (
+	"log"
+	"runtime/debug"
+
 	iio "aman/implement/io"
 	imodel "aman/implement/model"
 	ipagination "aman/implement/pagination"
@@ -39,7 +42,20 @@ func render(input *iio.InputStruct, list *imodel.ManDataObjectStruct, pagination
 	termbox.Flush()
 }
 
+/**
+ * main実行後の後処理
+ */
+func postExecMain() {
+	if r := recover(); r != nil {
+		var recoverCommand *iutil.CommandStruct = iutil.NewCommand()
+		recoverCommand.ExecWithStdin("stty", "sane")
+		log.Printf("Recovered. %v\nStack:\n%s", r, debug.Stack())
+	}
+}
+
 func main() {
+	// panic時には、端末設定をデフォルトに戻す
+	defer postExecMain()
 	// 標準入力有効化
 	err := termbox.Init()
 	if err != nil {
