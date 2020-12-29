@@ -53,7 +53,7 @@ func (myself *CommandStruct) ExecMan(commands []string) {
  */
 func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	// エコーバックを OFF
-	myself.execWithStdin("stty", "-echo")
+	myself.ExecWithStdin("stty", "-echo")
 	// コマンドをターミナル上に出力
 	var result string = strings.Join(commands, " ") + " " + strings.Join(options, " ")
 	// ターミナルをクリアする
@@ -61,7 +61,7 @@ func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
 	// システムが記憶している入力をクリア
 	time.Sleep(time.Millisecond * 15)
 	// エコーバックを ON
-	myself.execWithStdin("stty", "echo")
+	myself.ExecWithStdin("stty", "echo")
 }
 
 /*
@@ -69,7 +69,7 @@ func (myself *CommandStruct) CmdOutput(commands []string, options []string) {
  * @params name コマンド
  * @params option コマンドオプション
  */
-func (myself *CommandStruct) execWithStdin(name string, option ...string) {
+func (myself *CommandStruct) ExecWithStdin(name string, option ...string) {
 	c := exec.Command(name, option...)
 	c.Stdin = os.Stdin
 	c.Run()
