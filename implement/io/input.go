@@ -2,7 +2,6 @@ package iio
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -10,16 +9,12 @@ import (
 
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
+	"github.com/spf13/pflag"
 
 	sio "aman/struct/io"
 )
 
 type InputStruct sio.InputStruct
-
-var (
-	versionFlag = flag.Bool("v", false, "show version")
-	helpFlag    = flag.Bool("h", false, "show help")
-)
 
 const (
 	optionText = "options arguments\n"
@@ -46,7 +41,10 @@ func NewInput(version string) *InputStruct {
  * @description コマンドライン引数を取得
  */
 func (myself *InputStruct) Parse() error {
-	flag.Parse()
+	// オプションのセット
+	var versionFlag *bool = pflag.BoolP("version", "v", false, "show version")
+	var helpFlag *bool = pflag.BoolP("help", "h", false, "show help")
+	pflag.Parse()
 
 	// バージョン表示
 	if *versionFlag {
@@ -54,12 +52,12 @@ func (myself *InputStruct) Parse() error {
 		return errors.New("")
 	}
 
-	args := flag.Args()
+	args := pflag.Args()
 
 	// 引数がない場合はヘルプ表示
 	if len(args) < 1 || *helpFlag {
 		fmt.Fprintf(os.Stderr, optionText)
-		flag.PrintDefaults()
+		pflag.PrintDefaults()
 		fmt.Fprintf(os.Stderr, usageText)
 		return errors.New("")
 	}
