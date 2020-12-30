@@ -2,44 +2,68 @@ package iio
 
 import (
 	"errors"
-	"flag"
+	"fmt"
+	"os"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
+	"github.com/spf13/pflag"
 
 	sio "aman/struct/io"
 )
 
 type InputStruct sio.InputStruct
 
+const (
+	optionText = "options arguments\n"
+	usageText  = "usage: aman <command> [arguments]\n" +
+		"  <command>: command which has man result (ls, git,...)\n" +
+		" [arguments]: arguments which command have (`status` for `git status`)\n"
+)
+
 /*
  * @description コンストラクタ
  */
-func NewInput() *InputStruct {
+func NewInput(version string) *InputStruct {
 	input := &InputStruct{
 		Commands:   []string{},
 		Options:    []string{},
 		Query:      "",
 		CursorPosX: 2,
 	}
-	input.Parse()
+	input.Version = version
 	return input
 }
 
 /*
  * @description コマンドライン引数を取得
  */
-func (myself *InputStruct) Parse() {
-	flag.Parse()
-	args := flag.Args()
+func (myself *InputStruct) Parse() error {
+	// オプションのセット
+	var versionFlag *bool = pflag.BoolP("version", "v", false, "show version")
+	var helpFlag *bool = pflag.BoolP("help", "h", false, "show help")
+	pflag.Parse()
 
-	if len(args) < 1 {
-		panic(errors.New("Error: No arguments"))
+	// バージョン表示
+	if *versionFlag {
+		fmt.Println(myself.Version)
+		return errors.New("")
+	}
+
+	args := pflag.Args()
+
+	// 引数がない場合はヘルプ表示
+	if len(args) < 1 || *helpFlag {
+		fmt.Fprintf(os.Stderr, optionText)
+		pflag.PrintDefaults()
+		fmt.Fprintf(os.Stderr, usageText)
+		return errors.New("")
 	}
 
 	myself.Commands = args
+	return nil
 }
 
 /*

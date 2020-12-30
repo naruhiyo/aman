@@ -5,7 +5,7 @@ package main
  * s*** : 構造体モジュール
  */
 import (
-	"fmt"
+	"os"
 
 	"github.com/nsf/termbox-go"
 
@@ -15,6 +15,8 @@ import (
 	iutil "aman/implement/util"
 	iwindow "aman/implement/window"
 )
+
+var Version string // バージョン情報
 
 /**
  * 描画処理
@@ -42,33 +44,34 @@ func render(input *iio.InputStruct, list *imodel.ManDataObjectStruct, pagination
 	termbox.Flush()
 }
 
-/**
- * main実行後の後処理
- */
-func postExecMain() {
-	if r := recover(); r != nil {
-		var recoverCommand *iutil.CommandStruct = iutil.NewCommand()
-		recoverCommand.ExecWithStdin("stty", "sane")
-		fmt.Printf("Terminated with error: %v\n", r)
-	}
-}
-
 func main() {
+	// 初期化
+	var command *iutil.CommandStruct = iutil.NewCommand()
+	var pagination *ipagination.PaginationStruct = ipagination.NewPagination()
+	var input *iio.InputStruct = iio.NewInput(Version)
+	var list *imodel.ManDataObjectStruct = imodel.NewManDataObject()
+
 	// panic時には、端末設定をデフォルトに戻す
-	defer postExecMain()
+	defer command.PostExecMain()
+
+	// 実行引数の解析
+	parseErr := input.Parse()
+
+	if parseErr != nil {
+		command.PostExecMain()
+		os.Exit(1)
+	}
+
 	// 標準入力有効化
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
 	}
-	termbox.SetOutputMode(termbox.Output256)
 
-	// 初期化
+	// window のみ内部で termbox を使用しているので、termbox呼出後に初期化
 	var windowInfo *iwindow.WindowInfoStruct = iwindow.NewWindowInfo()
-	var pagination *ipagination.PaginationStruct = ipagination.NewPagination()
-	var input *iio.InputStruct = iio.NewInput()
-	var list *imodel.ManDataObjectStruct = imodel.NewManDataObject()
-	var command *iutil.CommandStruct = iutil.NewCommand()
+
+	termbox.SetOutputMode(termbox.Output256)
 
 	// コマンド実行
 	command.ExecMan(input.Commands)

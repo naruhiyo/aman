@@ -7,4 +7,5 @@ require (
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
 	github.com/mattn/go-runewidth v0.0.9
 	github.com/nsf/termbox-go v0.0.0-20201124104050-ed494de23a00
+	github.com/spf13/pflag v1.0.5
 )
