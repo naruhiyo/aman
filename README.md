@@ -35,8 +35,8 @@
 
 ### Support OS
 
-![ubuntu](https://img.shields.io/badge/-Ubuntu-6c272d.svg?logo=Ubuntu&style=flat-square)
-![mac](https://img.shields.io/badge/-Mac-000000.svg?logo=apple&style=flat-square)
+![Ubuntu](https://img.shields.io/badge/-Ubuntu-6c272d.svg?logo=Ubuntu&style=flat-square)
+![Mac or macOS](https://img.shields.io/badge/-Mac-000000.svg?logo=apple&style=flat-square)
 
 ### Installation
 
@@ -47,17 +47,22 @@ $ brew tap naruhiyo/aman
 $ brew install naruhiyo/aman/aman
 ```
 
-#### Linux
+#### Ubuntu
 
-First, download a zip binary file from github.
-
-Next, unzip the file,
+1. Download tarball file from [GitHub releases](https://github.com/naruhiyo/aman/releases/).
+2. Unpack the file.
 
 ```console
 $ tar -zxvf xxxx.tar.gz
 ```
 
-Last, add your `$PATH`.
+3. Locate `aman` to directory to your `$PATH`.
+
+For example, locate `/usr/local/bin`.
+
+```console
+$ mv aman_linux_amd64/aman /usr/local/bin/
+```
 
 ### Contributors
 
