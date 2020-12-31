@@ -1,5 +1,8 @@
 name: toc
-on: pull_request
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
 jobs:
   generateTOC:
     name: Generate TOC
@@ -9,3 +12,4 @@ jobs:
         uses: technote-space/toc-generator@v3
         with:
           GITHUB_TOKEN: ${{ secrets.TOC_ACCESS_TOKEN }}
+          CREATE_PR: true
