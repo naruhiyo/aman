@@ -136,7 +136,9 @@ func (myself *ManDataObjectStruct) IncrementalSearch(query string) {
 		resultCandidate := []smodel.ManData{}
 		for indexResult := 0; indexResult < len(myself.Filtered); indexResult++ {
 			// クエリの取り出し
-			if 0 <= strings.Index(myself.Filtered[indexResult].Contents, separatedQuery[indexQuery]) {
+			var contentsLower = strings.ToLower(myself.Filtered[indexResult].Contents)
+			var queryLower = strings.ToLower(separatedQuery[indexQuery])
+			if 0 <= strings.Index(contentsLower, queryLower) {
 				// クエリと一致する場合は結果に追加
 				resultCandidate = append(resultCandidate, smodel.ManData{
 					Contents:   myself.Filtered[indexResult].Contents,
