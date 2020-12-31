@@ -1,8 +1,5 @@
 name: toc
-on:
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-
+on: pull_request
 jobs:
   generateTOC:
     name: Generate TOC
