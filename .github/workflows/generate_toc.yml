@@ -1,0 +1,11 @@
+name: toc
+on: pull_request
+jobs:
+  generateTOC:
+    name: Generate TOC
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate README index
+        uses: technote-space/toc-generator@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.TOC_ACCESS_TOKEN }}
