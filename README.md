@@ -8,8 +8,19 @@
 
 ***A***ssistant tool to get options easily from ***man***.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Features](#features)
+- [Support OS](#support-os)
+- [Installation](#installation)
+  - [macOS](#macos)
+  - [Ubuntu](#ubuntu)
+- [Contributors](#contributors)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### Features
 
