@@ -88,6 +88,8 @@ func (myself *InputStruct) ExtractOption(line string) {
 	var selectedOption string = strings.Split(line, " ")[0]
 	// 末端の改行を削除する
 	selectedOption = strings.TrimRight(selectedOption, "\n")
+	// 末尾のカンマを削除する
+	selectedOption = strings.TrimRight(selectedOption, ",")
 
 	// 重複選択を制限する
 	for _, option := range myself.Options {
