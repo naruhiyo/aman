@@ -186,19 +186,21 @@ func (myself *WindowInfoStruct) searchMatchedText(originalText string, query str
 			var startIndex = 0
 			var targetText = originalText
 			for {
-				var matchedIndex = strings.Index(targetText, q)
+				var targetTextLower = strings.ToLower(targetText)
+				var qLower = strings.ToLower(q)
+				var matchedIndex = strings.Index(targetTextLower, qLower)
 				if matchedIndex == -1 {
 					break
 				}
+				startIndex += utf8.RuneCountInString(targetText[:matchedIndex])
 				list.Matched = append(
 					list.Matched,
 					list.GetMatchedInfo(
-						q,
-						startIndex+utf8.RuneCountInString(targetText[:matchedIndex]),
+						targetText[matchedIndex:matchedIndex+len(q)],
+						startIndex,
 					),
 				)
-
-				startIndex += utf8.RuneCountInString(targetText[:matchedIndex]) + 1
+				startIndex += 1
 				targetText = string([]rune(originalText)[startIndex:])
 			}
 		}
