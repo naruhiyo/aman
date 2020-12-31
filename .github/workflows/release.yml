@@ -33,6 +33,6 @@ jobs:
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --rm-dist --config .goreleaser.yml
+          args: release --rm-dist --config .github/workflows/.goreleaser.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
