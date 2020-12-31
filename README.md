@@ -13,25 +13,23 @@
 
 ### Features
 
-- Display options with `man` what you input
+- Display options with `man` what you input.
 
-![Display](https://user-images.githubusercontent.com/16721102/101240749-91455800-3734-11eb-9427-7ee94ef20606.gif)
+![Display](https://user-images.githubusercontent.com/28133383/103387478-67226280-4b47-11eb-902f-34267901fd0a.gif)
 
-- Filter options
+- Filter options by `AND`.
 
 ![Filter](https://user-images.githubusercontent.com/16721102/101240747-90142b00-3734-11eb-9879-bd7fdc993b6a.gif)
 
-- Select option
+- Select option.
+`Enter` to  select and `Esc` to finish.
 
-![Select](https://user-images.githubusercontent.com/16721102/101240742-88ed1d00-3734-11eb-9ff9-36943ef9419d.gif)
+![Select-option](https://user-images.githubusercontent.com/28133383/103387477-64c00880-4b47-11eb-8611-9ed28e8b3dd7.gif)
 
-- Select multiple options
+- Select multiple options.
+`Enter` to select and `Esc` to finish.
 
-![Select](https://user-images.githubusercontent.com/28133383/102232345-56ac9e00-3f32-11eb-8260-15b99545f1b6.gif)
-
-- Output the input command and selected options to your console
-
-![Output](https://user-images.githubusercontent.com/16721102/101240745-8db1d100-3734-11eb-89f3-915a7f8a4a5b.gif)
+![Select-multiple-options](https://user-images.githubusercontent.com/28133383/103387459-48bc6700-4b47-11eb-965a-1917ab7e1d37.gif)
 
 ### Support OS
 
