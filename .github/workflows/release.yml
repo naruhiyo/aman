@@ -37,6 +37,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
       - name: Generate README index
-        uses: technote-space/toc-generator@v2
+        uses: technote-space/toc-generator@v3
         with:
           GITHUB_TOKEN: ${{ github.token }}
