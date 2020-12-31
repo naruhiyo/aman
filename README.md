@@ -17,9 +17,9 @@
 
 ![Display](https://user-images.githubusercontent.com/28133383/103387478-67226280-4b47-11eb-902f-34267901fd0a.gif)
 
-- Filter options by `AND`.
+- Filter options by `AND` in case-insensitive.
 
-![Filter](https://user-images.githubusercontent.com/16721102/101240747-90142b00-3734-11eb-9879-bd7fdc993b6a.gif)
+![Filter](https://user-images.githubusercontent.com/28133383/103393025-ffc6db80-4b63-11eb-8bc0-4512d46e0967.gif)
 
 - Select option.
 `Enter` to  select and `Esc` to finish.
