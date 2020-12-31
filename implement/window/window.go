@@ -193,7 +193,7 @@ func (myself *WindowInfoStruct) searchMatchedText(originalText string, query str
 				list.Matched = append(
 					list.Matched,
 					list.GetMatchedInfo(
-						query,
+						q,
 						startIndex+utf8.RuneCountInString(targetText[:matchedIndex]),
 					),
 				)
